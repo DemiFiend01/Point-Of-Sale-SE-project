@@ -9,10 +9,10 @@ class Receipt:
         self.total = total
         self.tax = tax
 
-    def to_pdf(self):
+    def _to_pdf(self):
         print("I am now a pdf")
 
-    def to_str(self):
+    def _to_str(self):
         print("I am now a string and you can see me in the program")
 
 class Payment:
