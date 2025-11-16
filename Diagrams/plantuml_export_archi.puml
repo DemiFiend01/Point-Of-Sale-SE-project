@@ -1,0 +1,261 @@
+@startuml
+' ========================================================
+'  POINT OF SALE (POS) SYSTEM - CLASS DIAGRAM (FINAL, v2)
+'  Based on unified specification POSclass_fixed_v2.txt
+' ========================================================
+
+hide circle
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+' ========================================================
+'  ENUMS
+' ========================================================
+enum OrderStatus {
+  NEW
+  AWAITING_PREPARATION
+  IN_PREPARATION
+  READY
+  PAID
+  ARCHIVED
+  CANCELED
+}
+
+' ========================================================
+'  DOMAIN ENTITIES
+' ========================================================
+class MenuItem {
+  +id: str
+  +name: str
+  +price: float
+  +prep_time_min: int
+  +active: bool
+  +course: str
+  --
+  +update_details(name, price, prep_time_min, course)
+}
+
+class Money {
+  +amount: float
+  +currency: str
+  --
+  +__add__(other)
+  +__str__()
+}
+
+class Order {
+  +id: str
+  +created_at: datetime
+  +status: OrderStatus
+  +is_takeaway: bool
+  +scheduled_pickup_at: datetime
+  +estimated_ready_at: datetime
+  +table_no: str
+  +notes: str
+  +ready_at: datetime
+  +delivered_at: datetime
+  +paid_at: datetime
+  +archived_at: datetime
+  --
+  +add_item(menu_item, quantity)
+  +remove_item(item_id)
+  +set_serving_sequence(rules)
+  +confirm()
+  +mark_paid(payment)
+  +archive()
+  +total()
+}
+
+class OrderItem {
+  +id: str
+  +menu_item: MenuItem
+  +quantity: int
+  +unit_price: float
+  +status: OrderStatus
+  +ready_at: datetime
+  +course: str
+  --
+  +mark_ready()
+  +subtotal()
+}
+
+class ServingRule {
+  +position: int
+  +course: str
+  +items: list<OrderItem>
+}
+
+class Payment {
+  +id: str
+  +method: str
+  +amount: Money
+  +paid_at: datetime
+  +receipt_number: str
+  --
+  +generate_receipt()
+  +refund()
+}
+
+class Receipt {
+  +order_id: str
+  +lines: list
+  +total: float
+  +tax: float
+  --
+  +to_pdf()
+  +to_string()
+}
+
+class Report {
+  +period_from: datetime
+  +period_to: datetime
+  +total_orders: int
+  +total_revenue: float
+  +avg_prep_time_min: int
+  --
+  +generate(orders)
+}
+
+class PreparationTimeEstimator {
+  +estimate(order)
+}
+
+' ========================================================
+'  USER HIERARCHY
+' ========================================================
+abstract class User {
+  +id: str
+  +name: str
+  +login: str
+  +role: str
+}
+
+class Waiter {
+  +create_order()
+  +add_product(order, menu_item, qty)
+  +confirm_order(order)
+  +finalize_payment(order, method)
+}
+
+class Cook {
+  +list_pending_orders()
+  +mark_item_ready(order_id, item_id)
+  +update_estimated_times(order_id)
+}
+
+class Manager {
+  +generate_report(period)
+  +manage_menu(menu_service)
+  +view_archived_orders(filter)
+}
+
+User <|-- Waiter
+User <|-- Cook
+User <|-- Manager
+
+' ========================================================
+'  CONTROLLERS / PANELS
+' ========================================================
+package "UI Layer (Panels)" {
+  class MenuManagementPanel {
+    +add_product()
+    +edit_product()
+    +remove_product()
+    +list_menu()
+  }
+
+  class OrderCreationPanel {
+    +start_order()
+    +add_product()
+    +set_takeaway()
+    +confirm()
+    +set_serving_sequence()
+  }
+
+  class KitchenProcessingPanel {
+    +list_pending()
+    +mark_item_ready()
+    +mark_order_in_progress()
+  }
+
+  class PaymentPanel {
+    +list_ready_orders()
+    +show_receipt()
+    +mark_paid()
+  }
+
+  class OrderHistoryPanel {
+    +list_archived()
+    +filter_by_date()
+    +generate_report()
+  }
+}
+
+' ========================================================
+'  SERVICES (BUSINESS LOGIC)
+' ========================================================
+package "Business Logic Layer (Services)" {
+  class MenuService {
+    +add()
+    +update()
+    +remove()
+    +list()
+    +find()
+  }
+
+  class OrderService {
+    +create()
+    +add_item()
+    +remove_item()
+    +confirm()
+    +set_takeaway()
+    +archive()
+  }
+
+  class KitchenService {
+    +mark_item_ready()
+    +update_estimates()
+    +list_pending()
+  }
+
+  class PaymentService {
+    +pay(order, method)
+    +prepare_receipt(order)
+  }
+
+  class ReportingService {
+    +archived_orders(filter)
+    +sales_summary(period)
+  }
+}
+
+' ========================================================
+'  RELATIONSHIPS
+' ========================================================
+Order "1" *-- "1..*" OrderItem : contains
+OrderItem "1" --> "1" MenuItem : item_of
+Order "1" --> "0..1" Payment : paid_by
+Payment "1" --> "1" Money : amount
+Order --> OrderStatus
+OrderItem --> OrderStatus
+Order "1" --> "1" Waiter : placed_by
+ServingRule "1" o-- "0..*" OrderItem : sequences
+PreparationTimeEstimator ..> Order : «uses»
+
+' Panel to Service dependencies
+MenuManagementPanel ..> MenuService : «uses»
+OrderCreationPanel ..> OrderService : «uses»
+KitchenProcessingPanel ..> KitchenService : «uses»
+PaymentPanel ..> PaymentService : «uses»
+OrderHistoryPanel ..> ReportingService : «uses»
+
+' Services interacting with domain
+MenuService ..> MenuItem
+OrderService ..> Order
+OrderService ..> OrderItem
+KitchenService ..> Order
+PaymentService ..> Payment
+ReportingService ..> Report
+
+@enduml
