@@ -3,29 +3,33 @@ from datetime import datetime
 
 
 class Receipt:
-    def __init__(self,order_id, lines, total, tax=23):
-        self.order_id = order_id
-        self.lines = lines #list, i do not understand what it exactly is, the number of lines on the receipt?
-        self.total = total
-        self.tax = tax
+    def __init__(self, order_id, lines, total, tax=23):
+        self.order_id = order_id  # string
+        self.lines = lines  # list
+        self.total = total  # float
+        self.tax = tax  # float
 
-    def _to_pdf(self):
+    def _to_pdf(self):  # protected method
         print("I am now a pdf")
 
-    def _to_str(self):
+    def _to_str(self):  # protected method
         print("I am now a string and you can see me in the program")
 
+
 class Payment:
-    def __init__(self,id,order_id,method, amount, receipt_num):
-        self.id = id
-        self.order_id = order_id #different than payment id for now, could always be changed
-        self.method = method
-        self.amount = amount
-        self.paid_at = datetime.datetime
-        self.receipt_number = receipt_num
+    def __init__(self, id, method, amount: Utils.Money, receipt_num):
+        self.id = id  # string
+        self.method = method  # string 'Cash', 'Card' maybe could be Enum later
+        self.amount = amount  # Money
+        self.paid_at = datetime.datetime  # datetime | none
+        self.receipt_number = receipt_num  # string
 
-    def _generate_receipt(self):
+    def _generate_receipt(self):  # protected method, returns Receipt
         lines = 1
-        print("Generating")  #i dont know what to do about the lines here, do we extract it from order?
-        receipt =  Receipt(self.order_id, lines, self.amount) #default tax for now      
+        # i dont know what to do about the lines here, do we extract it from order?
+        print("Generating")
+        # default tax for now
+        receipt = Receipt(self.order_id, lines, self.amount)
 
+    def _refund(self):  # protected method
+        print("Refunding the payment")

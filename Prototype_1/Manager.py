@@ -1,7 +1,9 @@
-import Employee
+import User
 
-#inheritance
-class Manager(Employee):
+# inheritance
+
+
+class Manager(User.User):
     def __init__(self):
         print("Manager")
 
@@ -13,5 +15,3 @@ class Manager(Employee):
 
     def viewArchivedOrders(self):
         print("Viewing")
-
-    

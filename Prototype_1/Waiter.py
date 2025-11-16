@@ -1,6 +1,7 @@
-import Employee
+import User
 
-class Waiter(Employee):
+
+class Waiter(User.User):
     def __init__(self):
         print("Im a waiter yay")
 

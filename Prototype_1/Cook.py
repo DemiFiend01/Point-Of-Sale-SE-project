@@ -1,12 +1,13 @@
-import Employee
+import User
 
-class Cook(Employee):
+
+class Cook(User.User):
     def __init__(self):
         print("I have been born as a Cook")
 
     def view_pending_order(self):
         print("viewing pending orders")
-    
+
     def mark_item_ready(self):
         print("this item is ready")
 
