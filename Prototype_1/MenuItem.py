@@ -1,14 +1,14 @@
 class MenuItem:
-    def __init__(self, id, name, price, prep_time_min, course):
-        self.id = id  # string
-        self.name = name  # string
-        self.price = price  # float
-        self.prep_time_min = prep_time_min  # int
-        self.active = True  # bool
-        self.course = course  # string
+    def __init__(self, id: str, name: str, price: float, prep_time_min: int, course: str):
+        self._id = id  # string
+        self._name = name  # string
+        self._price = price  # float
+        self._prep_time_min = prep_time_min  # int
+        self._active = True  # bool
+        self._course = course  # string
 
-    def _update_details(self, name, price, prep_time_min, course):  # protected method
-        self.name = name
-        self.price = price
-        self.prep_time_min = prep_time_min
-        self.course = course
+    def _update_details(self, name: str, price: float, prep_time_min: int, course: str):  # protected method
+        self._name = name
+        self._price = price
+        self._prep_time_min = prep_time_min
+        self._course = course
