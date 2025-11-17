@@ -1,5 +1,6 @@
 # Point-Of-Sale-SE-project
-TO DO:
+
+## TO DO:
 2. Logic for pick up dates (now placeholders) in Waiter
 3. Logic for creating an order with notes already?
 4. What is first, creating an order or adding menuitems to it? (now when creating an Order is it None)
