@@ -15,4 +15,6 @@
 8. Database logic needed to implement actual logic (especially in Actors)
 9. Manager report creation
 10. Manager database report viewing
+11. In OrderCreationPanel, _confirm(self) what exactly?
+12. Are the orders in the KitchenProcessingPanel then linked with the Cook who prepares them? or can anyone prepare any part of any order freely?
 
