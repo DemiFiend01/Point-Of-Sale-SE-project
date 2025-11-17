@@ -89,3 +89,9 @@ class Order:
         for item in self._order_items:
             total += item._unit_price
         return total
+
+    # proposition
+    def _cancel_order(self):  # protected method
+        if self._status != (Utils.OrderStatus.CANCELED | Utils.OrderStatus.ARCHIVED):
+            raise AttributeError("cannot cancel already finished orders")
+        self._status = Utils.OrderStatus.CANCELED

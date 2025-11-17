@@ -1,5 +1,7 @@
 import Order
 import Utils
+from enum import Enum
+import datetime
 
 
 class Money:
@@ -24,3 +26,33 @@ class PreparationTimeEstimator:
         for item in order._order_items:
             estimated_time += item._prep_time_min
         return estimated_time
+
+
+class OrderStatus(Enum):
+    NEW = 1
+    AWAITING_PREPARATION = 2
+    IN_PREPARATION = 3
+    READY = 4
+    PAID = 5
+    ARCHIVED = 6
+    CANCELED = 7
+
+
+class IDGenerator:
+    def __init__(self):
+        self.curr_order_id = 0
+        self.today = datetime.datetime.today()
+
+    @staticmethod
+    def order_id_generator(self, order: Order.Order) -> int:
+        today = datetime.datetime.today()
+        if today != self.today:
+            self.curr_order_id = 0
+            self.today = today
+
+        self.curr_order_id += 1
+
+        if self.curr_order_id >= 99:
+            self.curr_order_id == 1
+
+        return self.curr_order_id
