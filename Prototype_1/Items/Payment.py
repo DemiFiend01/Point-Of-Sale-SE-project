@@ -9,10 +9,10 @@ class Receipt:
         self._total = total  # float
         self._tax = tax  # float
 
-    def _to_pdf(self):  # protected method
-        print("I am now a pdf")
+    def _to_pdf(self) -> bytes:  # protected method
+        print("I am now a pdf")  # bytes? in order to print it
 
-    def _to_str(self):  # protected method
+    def _to_str(self) -> str:  # protected method
         print("I am now a string and you can see me in the program")
 
 
@@ -24,12 +24,13 @@ class Payment:
         self._paid_at = datetime.datetime  # datetime | none
         self._receipt_number = receipt_num  # string
 
-    def _generate_receipt(self):  # protected method, returns Receipt
+    def _generate_receipt(self) -> Receipt:  # protected method, returns Receipt
         lines = 1
         # i dont know what to do about the lines here, do we extract it from order?
         print("Generating")
         # default tax for now
         receipt = Receipt(self._order_id, self._lines, self._amount)
+        return receipt
 
     def _refund(self):  # protected method
         print("Refunding the payment")

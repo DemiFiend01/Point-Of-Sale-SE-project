@@ -2,7 +2,7 @@ import datetime
 import Utils
 
 import MenuItem
-import Waiter
+import Actors.Waiter as Waiter
 import Payment
 from random import random
 
@@ -21,7 +21,7 @@ class OrderItem:
         self._status = Utils.OrderStatus.READY
         self._ready_at = datetime.date
 
-    def _subtotal(self):  # protected method
+    def _subtotal(self) -> float:  # protected method
         return self._quantity * self._unit_price
 
 
@@ -52,9 +52,10 @@ class Order:
         self._paid_at
         self._archived_at
 
-    def _add_item(self, menuItem: MenuItem.MenuItem, quantity: int):  # protected method
+    def _add_item(self, menuItem: MenuItem.MenuItem, quantity: int) -> OrderItem:  # protected method
         for i in range(quantity):
             self._order_items.append(menuItem)
+            # implement databases, link to OrderService and to OrderCreationPanel
 
     def _remove_item(self, item_id):  # protected method
         print("jh")
@@ -86,7 +87,7 @@ class Order:
         self._status = Utils.OrderStatus.ARCHIVED
         self._archived_at = datetime.date
 
-    def _total(self):  # protected method
+    def _total(self) -> float:  # protected method
         total = 0
         for item in self._order_items:
             total += item._unit_price

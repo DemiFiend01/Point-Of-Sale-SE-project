@@ -14,13 +14,13 @@ class Money:
             raise ValueError("Currencies must match!")
         return self._amount+other._amount
 
-    def _str(self):  # protected method
+    def _str(self) -> str:  # protected method
         return ('%4.2f %s' % (self._amount, self._currency))
 
 
 class PreparationTimeEstimator:
     @staticmethod
-    def estimate(order: Order.Order):  # public method
+    def estimate(order: Order.Order) -> int:  # public method
         print("Predicting total prep time")
         estimated_time = 0  # minutes?
         for item in order._order_items:

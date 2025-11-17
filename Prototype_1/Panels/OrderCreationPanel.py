@@ -1,4 +1,4 @@
-import Order  # for serving sequence
+import Items.Order as Order  # for serving sequence
 
 
 class OrderCreationPanel:

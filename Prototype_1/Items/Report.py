@@ -11,5 +11,6 @@ class Report:
         self.avg_prep_time_min = avg_prep_time_min  # probably int or datetime
 
     # protected method, orders is a list of Orders
-    def _generate(self, orders: list[Order.Order]):
+    def _generate(self, orders: list[Order.Order]) -> "Report":
         print("will aggregate order data into summary metrics")
+        # return Report apparently

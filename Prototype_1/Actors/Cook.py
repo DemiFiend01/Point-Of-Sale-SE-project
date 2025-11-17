@@ -1,5 +1,5 @@
-import User
-import Order
+import Actors.User as User
+import Items.Order as Order
 
 
 class Cook(User.User):

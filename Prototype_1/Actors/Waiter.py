@@ -1,8 +1,8 @@
-import User
-import Order
-import MenuItem
-import Payment
-import Utils
+import Actors.User as User
+import Items.Order as Order
+import Items.MenuItem as MenuItem
+import Items.Payment as Payment
+import Items.Utils as Utils
 import datetime
 
 

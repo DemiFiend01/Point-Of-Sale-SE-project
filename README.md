@@ -17,4 +17,5 @@
 10. Manager database report viewing
 11. In OrderCreationPanel, _confirm(self) what exactly?
 12. Are the orders in the KitchenProcessingPanel then linked with the Cook who prepares them? or can anyone prepare any part of any order freely?
-
+13. Possibly rewrite the logic behind adding items to the order, link it to OrderService
+14. FILTER and PERIOD in ReportingService, what are those arguments exactly? need to link them to input from GUI probably

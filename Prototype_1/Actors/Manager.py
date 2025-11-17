@@ -1,6 +1,6 @@
-import User
-import Report
-import Order
+import Actors.User as User
+import Items.Report as Report
+import Items.Order as Order
 # inheritance
 
 
