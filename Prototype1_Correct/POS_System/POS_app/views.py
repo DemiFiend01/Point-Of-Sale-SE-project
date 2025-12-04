@@ -2,10 +2,12 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
+from django.template import loader
 
 
 def order_create(request):
-    return HttpResponse("Hello create")
+    template = loader.get_template("create_order.html")
+    return HttpResponse(template.render())
 
 
 def order_detail(request, order_id):

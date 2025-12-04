@@ -52,9 +52,10 @@ class Order:
         self._paid_at
         self._archived_at
 
-    def _add_item(self, menuItem: MenuItem.MenuItem, quantity: int) -> OrderItem:  # protected method
+#change from menu to order item, it makes more sense to add order items here
+    def _add_item(self, orderItem: OrderItem, quantity: int):  # protected method
         for i in range(quantity):
-            self._order_items.append(menuItem)
+            self._order_items.append(orderItem)
             # implement databases, link to OrderService and to OrderCreationPanel
 
     def _remove_item(self, item_id):  # protected method
