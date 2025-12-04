@@ -3,9 +3,9 @@
 from enum import Enum
 
 class Role(Enum):
-    MANAGER = 1
-    WAITER = 2
-    COOK = 3
+    MANAGER = "Manager"
+    WAITER = "Waiter"
+    COOK = "Cook"
 
 class User:
     def __init__(self, name: str, login: str, password: str, role: Role):
