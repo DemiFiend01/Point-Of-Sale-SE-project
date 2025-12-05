@@ -25,11 +25,11 @@ def login_view(request):
         except models.Employees.DoesNotExist:
             return render(request, "login.html", {"error": "This user does not exist"})
         
-        if emp.role == Role.MANAGER:
+        if emp._role == Role.MANAGER:
             business_emp = Manager(emp._name, emp._login, emp._password, Role.MANAGER)
-        elif emp.role == Role.COOK:
+        elif emp._role == Role.COOK:
             business_emp = Cook(emp._name, emp._login, emp._password, Role.COOK)
-        elif emp.role == Role.WAITER:
+        elif emp._role == Role.WAITER:
             business_emp = Waiter(emp._name, emp._login, emp._password, Role.WAITER)
         else:
             print("Wrong role")
