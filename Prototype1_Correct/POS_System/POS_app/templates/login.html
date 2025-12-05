@@ -3,7 +3,8 @@
 <body>
 
 <h1>Log in</h1>
-<form method="POST">
+<form method="POST" action="{% url 'login_site' %}">
+    {% csrf_token %}
     <label for="login">Login:</label>
     <input type="text" id="login" name="login" required>
     <label for="password">password:</label>
