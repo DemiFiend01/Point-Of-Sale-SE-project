@@ -1,11 +1,4 @@
-# POS_app/business/Services/OrderService.py
-#this code is making me cringe. its all chat gpt and it just fucks everything up
-#he wanted to add login
-#but the django type login while like not handling that, but going straight to order service
-#istg. i need to delete ALL of this here
-#you see the duplicate import?
-# or the auth get_user_model? this one won't work and he just added it, without thinking at all.
-
+#man, will need to rework it all
 # from POS_app.models import Order, OrderItem, MenuItem
 # from django.utils import timezone
 # from django.contrib.auth import get_user_model
@@ -46,7 +39,7 @@ class OrderService:
         #     unit_price=menu_item.price,
         #     status='NEW',
         #     course=menu_item.course,
-        # )
+        # )     
         # return order_item
 
     def remove_item(self, order_id: int, order_item_id: int): #-> bool:
