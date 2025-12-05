@@ -1,4 +1,4 @@
-import Order
+from POS_app.business.Items import Order
 from datetime import datetime
 
 

@@ -1,4 +1,4 @@
-import Items.Order as Order  # for serving sequence
+from POS_app.business.Items import Order
 
 
 class OrderCreationPanel:

@@ -1,6 +1,6 @@
-import Actors.User as User
-import Items.Report as Report
-import Items.Order as Order
+from POS_app.business.Actors import User
+from POS_app.business.Items import Report
+from POS_app.business.Items import Order
 # inheritance
 
 

@@ -1,5 +1,4 @@
-import Order
-import Utils
+from POS_app.business.Items import Order, Utils
 from enum import Enum
 import datetime
 

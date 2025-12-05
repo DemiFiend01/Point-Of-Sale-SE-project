@@ -1,4 +1,4 @@
-import Items.MenuItem as MenuItem
+from POS_app.business.Items import MenuItem
 
 
 class MenuService:

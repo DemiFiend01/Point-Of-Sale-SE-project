@@ -1,5 +1,4 @@
-import Items.Report as Report
-import Items.Order as Order
+from POS_app.business.Items import Report, Order
 
 
 class ReportingService:

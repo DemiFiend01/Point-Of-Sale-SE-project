@@ -1,8 +1,8 @@
-import Actors.User as User
-import Items.Order as Order
-import Items.MenuItem as MenuItem
-import Items.Payment as Payment
-import Items.Utils as Utils
+from POS_app.business.Actors import User
+from POS_app.business.Items import Order
+from POS_app.business.Items import MenuItem
+from POS_app.business.Items import Payment
+from POS_app.business.Items import Utils
 import datetime
 
 

@@ -1,5 +1,5 @@
-import Actors.User as User
-import Items.Order as Order
+from POS_app.business.Actors import User
+from POS_app.business.Items import Order
 
 
 class Cook(User.User):

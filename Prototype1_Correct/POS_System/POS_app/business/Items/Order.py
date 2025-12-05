@@ -1,9 +1,6 @@
 import datetime
-import Utils
-
-import MenuItem
-import Actors.Waiter as Waiter
-import Payment
+from POS_app.business.Items import Utils, MenuItem, Payment
+from POS_app.business.Actors import Waiter
 from random import random
 
 
