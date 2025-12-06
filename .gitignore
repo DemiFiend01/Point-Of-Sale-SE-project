@@ -1,8 +1,9 @@
 Prototype_1_Django/
 <<<<<<< HEAD
 Prototype1_Correct/django_venv/
+Prototype1_Correct/POS_System/POS_System/settings.py
 =======
 Prototype1_Correct/django_venv
 Prototype1_Correct/POS_venv
-
+Prototype1_Correct/POS_System/POS_System/settings.py
 >>>>>>> c464c6c365383e19d49702528d4ad1eafc3000d0
