@@ -8,14 +8,14 @@
 	-incorporate the visibility
 	-add id logic static method
 	-order_id now an int from 1 to 99
-	-some proposed methods mainly in Waiter??
-5. How to actually store the orders? 
-6. Add menuItem id logic!!
-7. Add User id logic!!!
-8. Database logic needed to implement actual logic (especially in Actors)
-9. Manager report creation
-10. Manager database report viewing
-11. In OrderCreationPanel, _confirm(self) what exactly?
-12. Are the orders in the KitchenProcessingPanel then linked with the Cook who prepares them? or can anyone prepare any part of any order freely?
-13. Possibly rewrite the logic behind adding items to the order, link it to OrderService
-14. FILTER and PERIOD in ReportingService, what are those arguments exactly? need to link them to input from GUI probably
+5. Manager report creation
+6. Manager database report viewing
+7. In OrderCreationPanel, _confirm(self) what exactly?
+8. Possibly rewrite the logic behind adding items to the order, link it to OrderService
+9. FILTER and PERIOD in ReportingService, what are those arguments exactly? need to link them to input from GUI probably
+10. Add more models
+11. advance the dashboards
+12. log out
+13. manager adding employees? (because django admin is like an IT guy they hired to just set things up, they're not really a proper restaurant employee)
+14. html -> css??? maybe
+15. actual logic that will come with more models and views and the dashboards being developed further
