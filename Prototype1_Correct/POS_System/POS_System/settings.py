@@ -73,17 +73,6 @@ WSGI_APPLICATION = 'POS_System.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgresFiend',
-        'PASSWORD': 'SE-POS-2025',
-        'HOST': 'pos-system-database-postgre.c1gyyc4oujom.eu-central-1.rds.amazonaws.com',
-        'PORT': '5432'
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

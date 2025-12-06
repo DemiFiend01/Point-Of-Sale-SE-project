@@ -5,8 +5,9 @@ from POS_app.business.Items import Order
 
 
 class Manager(User.User):
-    def __init__(self):
+    def __init__(self,  name: str, login: str, password: str, role: User.Role):
         print("Manager")
+        super().__init__(name, login, password, role)
 
     def _manage_menu(self):  # protected method
         print("managing the menu")

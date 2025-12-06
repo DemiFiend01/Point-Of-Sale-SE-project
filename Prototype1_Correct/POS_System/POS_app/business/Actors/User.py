@@ -2,10 +2,12 @@
 # Defines shared properties (authentication, identification).
 from enum import Enum
 
+
 class Role(Enum):
     MANAGER = "Manager"
     WAITER = "Waiter"
     COOK = "Cook"
+
 
 class User:
     def __init__(self, name: str, login: str, password: str, role: Role):

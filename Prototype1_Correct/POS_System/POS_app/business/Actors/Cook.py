@@ -3,8 +3,9 @@ from POS_app.business.Items import Order
 
 
 class Cook(User.User):
-    def __init__(self):
+    def __init__(self, name: str, login: str, password: str, role: User.Role):
         print("I have been born as a Cook")
+        super().__init__(name, login, password, role)
 
     def _list_pending_order(self) -> list[Order.Order]:
         # how to link the cook with the pending orders?

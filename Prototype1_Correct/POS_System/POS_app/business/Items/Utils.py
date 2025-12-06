@@ -1,6 +1,10 @@
-from POS_app.business.Items import Order, Utils
 from enum import Enum
 import datetime
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from POS_app.business.Items.Order import Order
 
 
 class Money:
@@ -8,7 +12,9 @@ class Money:
         self._amount = amount  # float
         self._currency = currency  # string
 
-    def _add(self, other: Utils.Money):  # protected method
+    def _add(self, other):  # protected method
+        if not isinstance(other, Money):
+            return NotImplemented
         if self._currency != other._currency:
             raise ValueError("Currencies must match!")
         return self._amount+other._amount
@@ -19,7 +25,7 @@ class Money:
 
 class PreparationTimeEstimator:
     @staticmethod
-    def estimate(order: Order.Order) -> int:  # public method
+    def estimate(order: "Order") -> int:  # public method
         print("Predicting total prep time")
         estimated_time = 0  # minutes?
         for item in order._order_items:
@@ -43,7 +49,7 @@ class IDGenerator:
         self.today = datetime.datetime.today()
 
     @staticmethod
-    def order_id_generator(self, order: Order.Order) -> int:
+    def order_id_generator(self, order: "Order") -> int:
         today = datetime.datetime.today()
         if today != self.today:
             self.curr_order_id = 0
