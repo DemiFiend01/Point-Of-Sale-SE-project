@@ -7,22 +7,6 @@ if TYPE_CHECKING:
     from POS_app.business.Items.Order import Order
 
 
-class Money:
-    def __init__(self, amount: float, currency: str):
-        self._amount = amount  # float
-        self._currency = currency  # string
-
-    def _add(self, other):  # protected method
-        if not isinstance(other, Money):
-            return NotImplemented
-        if self._currency != other._currency:
-            raise ValueError("Currencies must match!")
-        return self._amount+other._amount
-
-    def _str(self) -> str:  # protected method
-        return ('%4.2f %s' % (self._amount, self._currency))
-
-
 class PreparationTimeEstimator:
     @staticmethod
     def estimate(order: "Order") -> int:  # public method
@@ -34,13 +18,13 @@ class PreparationTimeEstimator:
 
 
 class OrderStatus(Enum):
-    NEW = 1
-    AWAITING_PREPARATION = 2
-    IN_PREPARATION = 3
-    READY = 4
-    PAID = 5
-    ARCHIVED = 6
-    CANCELED = 7
+    NEW = "New"
+    AWAITING_PREPARATION = "Awaiting preparation"
+    IN_PREPARATION = "In preparation"
+    READY = "Ready"
+    PAID = "Paid"
+    ARCHIVED = "Archived"
+    CANCELED = "Canceled"
 
 
 class IDGenerator:

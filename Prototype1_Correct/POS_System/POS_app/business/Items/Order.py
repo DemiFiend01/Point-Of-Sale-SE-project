@@ -9,7 +9,7 @@ class OrderItem:
         self._id = id  # string
         self._menu_item = menu_item  # MenuItem
         self._quantity = quantity  # int
-        self._unit_price = unit_price  # snapshot at add time
+        self._unit_price = unit_price  # snapshot at add time -> why this here??
         self._status = status  # OrderStatus
         self._ready_at = ready_at  # datetime | none
         self._course = course  # string
@@ -19,9 +19,12 @@ class OrderItem:
         self._ready_at = datetime.date
 
     def _subtotal(self) -> float:  # protected method
-        return self._quantity * self._unit_price
+        # include the tax!!!
+        return self._quantity * self._unit_price * (1 + self._menu_item._tax)
 
 
+# basically yhis can be 1 or more order items packed together as like one set of servable dishes.
+# ex. someone orders: (soup), (dinner and drinks), (beer), (ice cream, cake). You would prefer all of those dishes to be grouped together probably
 class ServingRule:  # i do not quite get how this works. maybe a list of pairs would be a better fit?
     def __init__(self, position: int, course: str, items: list[OrderItem]):
         self._position = position
@@ -31,7 +34,7 @@ class ServingRule:  # i do not quite get how this works. maybe a list of pairs w
 
 class Order:
     def __init__(self, status: Utils.OrderStatus, is_takeaway: bool, scheduled_pick_up: datetime.date, estimated_pick_up: datetime.date, table_no: str, notes: str, waiter: Waiter.Waiter):
-        self._id = Utils.IDGenerator.order_id_generator(
+        self.displayed_id = Utils.IDGenerator.orderdisplayed_id_generator(
             self)  # int from 1 to 99
         self._created_at = datetime.date  # datetime
         self._status = status  # OrderStatus
@@ -49,10 +52,10 @@ class Order:
         self._paid_at
         self._archived_at
 
-#change from menu to order item, it makes more sense to add order items here
-    def _add_item(self, orderItem: OrderItem, quantity: int):  # protected method
+# change from menu to order item, it makes more sense to add order items here
+    def _add_item(self, orderItems: ServingRule, quantity: int):  # protected method
         for i in range(quantity):
-            self._order_items.append(orderItem)
+            self._order_items.append(orderItems)
             # implement databases, link to OrderService and to OrderCreationPanel
 
     def _remove_item(self, item_id):  # protected method
