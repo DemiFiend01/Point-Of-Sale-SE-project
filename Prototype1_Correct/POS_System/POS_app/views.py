@@ -89,6 +89,7 @@ def manager_dashboard(request):
                 return redirect("manager_manage_emp")
     return render(request, "Manager_dashboard.html")
 
+#all of those methods will call the appropriate business panels or they can be rewritten to be inside of those panels in some way!!!!
 @role_required(allowed_roles=[Role.MANAGER.name])
 def manager_manage_menu(request): #to be implemented, add returning
     return render(request,"Manager_manage_menu.html")
@@ -113,8 +114,14 @@ def waiter_dashboard(request):
             case "Log out":
                 request.session.flush()
                 return redirect("login_site")
+            case "Manage orders":
+                return redirect("waiter_manage_orders")
     return render(request,"Waiter_dashboard.html")
 
+#this method will have many more redirections and calls to the appropriate panels further down the line
+@role_required(allowed_roles=[Role.WAITER.name])
+def waiter_manage_orders(request):
+    return render(request,"Waiter_manage_orders.html")
 
 @role_required(allowed_roles=[Role.COOK.name])
 def cook_dashboard(request):
@@ -124,7 +131,25 @@ def cook_dashboard(request):
             case "Log out":
                 request.session.flush() #log out basically, will not be able to access any sites basically 
                 return redirect("login_site")
+            case "View pending orders":
+                return redirect("cook_pending_orders")
+            case "Mark order as ready":
+                return redirect("cook_mark_order_ready")
+            case "Mark item as ready":
+                return redirect("cook_mark_item_ready")
     return render(request,"Cook_dashboard.html")
+
+@role_required(allowed_roles=[Role.COOK.name])
+def cook_pending_orders(request): #list all pending orders
+    return render(request, "Cook_view_pending_orders.html")
+
+@role_required(allowed_roles=[Role.COOK.name])
+def cook_mark_order_ready(request): #to be frank, this should not be a seperate view. this can be in one big panel like mark items and orders as ready where orders would be auto ready when all items are ready
+    return render(request, "Cook_mark_order_as_ready.html")
+
+@role_required(allowed_roles=[Role.COOK.name])
+def cook_mark_item_ready(request): 
+    return render(request, "Cook_mark_item_as_ready.html")
 
 
 def order_detail(request, order_id):

@@ -14,5 +14,9 @@ urlpatterns = [
     path('manager/archived_orders/', views.manager_archived_orders, name ='manager_archived_orders'),
     path('manager/manage_employees/', views.manager_manage_emp, name ='manager_manage_emp'),
     path('waiter/', views.waiter_dashboard, name='waiter_dashboard'),
-    path('cook/', views.cook_dashboard, name='cook_dashboard')
+    path('waiter/manage_orders/', views.waiter_manage_orders, name='waiter_manage_orders'),
+    path('cook/', views.cook_dashboard, name='cook_dashboard'),
+    path('cook/view_pending_orders/', views.cook_pending_orders, name='cook_pending_orders'),
+    path('cook/mark_order_ready', views.cook_mark_order_ready, name='cook_mark_order_ready'),
+    path('cook/mark_item_ready', views.cook_mark_item_ready, name='cook_mark_item_ready')
 ]
