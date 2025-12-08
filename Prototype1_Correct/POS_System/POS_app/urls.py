@@ -10,5 +10,5 @@ urlpatterns = [
     path('manager/', views.manager_dashboard, name='manager_dashboard'),
     path('waiter/', views.waiter_dashboard, name='waiter_dashboard'),
     path('cook/', views.cook_dashboard, name='cook_dashboard'),
-    path('', views.login_view, name='login_site')
+    path('', views.login_view, name='login_site') #the data will be sent here from the html template?
 ]

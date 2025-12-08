@@ -46,8 +46,11 @@ def login_view(request):
         if not emp.check_password(password):
             return render(request, "login.html", {"error": "Wrong password"})
 
+        request.session["user_name"] = emp._name
+        print(emp._name)
         request.session["user_login"] = emp._login
         request.session["user_role"] = emp._role
+        print("SESSION CONTENT:", dict(request.session))
 
         if emp._role == Role.MANAGER.name:
             business_emp = Manager(emp._name, emp._login,
@@ -69,20 +72,35 @@ def login_view(request):
 
 @role_required(allowed_roles=[Role.MANAGER.name])
 def manager_dashboard(request):
-    template = loader.get_template("manager_dashboard.html")
-    return HttpResponse(template.render())
+    if (request.method == "POST"):
+        action = request.POST.get("action")
+        match action:
+            case "Log out":
+                request.session.flush()
+                return redirect("login_site")
+    return render(request, "manager_dashboard.html")
 
 
 @role_required(allowed_roles=[Role.WAITER.name])
 def waiter_dashboard(request):
-    template = loader.get_template("waiter_dashboard.html")
-    return HttpResponse(template.render())
+    if (request.method == "POST"):
+        action = request.POST.get("action")
+        match action:
+            case "Log out":
+                request.session.flush()
+                return redirect("login_site")
+    return render(request,"waiter_dashboard.html")
 
 
 @role_required(allowed_roles=[Role.COOK.name])
 def cook_dashboard(request):
-    template = loader.get_template("cook_dashboard.html")
-    return HttpResponse(template.render())
+    if (request.method == "POST"):
+        action = request.POST.get("action")
+        match action:
+            case "Log out":
+                request.session.flush() #log out basically, will not be able to access any sites basically 
+                return redirect("login_site")
+    return render(request,"cook_dashboard.html")
 
 
 def order_detail(request, order_id):

@@ -3,8 +3,15 @@
 
 <body>
 
-    <h1>You are a Cook</h1>
-    <p>Hello dear cook.</p>
+    <h1>Hello cook {{ request.session.user_name }}</h1>
+    <p>DASHBOARD</p>
+    <form method="POST" action="{% url 'cook_dashboard' %}">
+        {% csrf_token %}
+        <button type="submit" name="action" value="Log out">Log out</button>
+        <button type="submit" name="action" value="View pending orders">View pending orders</button>
+        <button type="submit" name="action" value="Mark order as ready">Mark order as ready</button>
+        <button type="submit" name="action" value="Mark item as ready">Mark item as ready</button>
+    </form>
 
 </body>
 

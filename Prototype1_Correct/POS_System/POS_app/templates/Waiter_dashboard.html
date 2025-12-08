@@ -3,8 +3,13 @@
 
 <body>
 
-    <h1>You are a waiter</h1>
-    <p>Hello waiter</p>
+    <h1>Hello waiter {{ request.session.user_name }}</h1>
+    <p>DASHBOARD</p>
+    <form method="POST" action="{% url 'waiter_dashboard' %}">
+        {% csrf_token %}
+        <button type="submit" name="action" value="Log out">Log out</button>
+        <button type="submit" name="action" value="Manage orders">Manage orders</button>
+    </form>
 
 </body>
 

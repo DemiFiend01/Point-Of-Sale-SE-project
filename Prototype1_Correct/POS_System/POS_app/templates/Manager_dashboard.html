@@ -3,8 +3,16 @@
 
 <body>
 
-    <h1>You are a manager</h1>
-    <p>Hello manager</p>
+    <h1>Hello manager {{ request.session.user_name }}</h1>
+    <p>DASHBOARD</p>
+    <form method="POST" action="{% url 'manager_dashboard' %}">
+        {% csrf_token %}
+        <button type="submit" name="action" value="Log out">Log out</button>
+        <button type="submit" name="action" value="Manage menu">Manage menu</button>
+        <button type="submit" name="action" value="Generate report">Generate report</button>
+        <button type="submit" name="action" value="View archived orders">View archived orders</button>
+        <button type="submit" name="action" value="Manage employees">Manage employees</button>
+    </form>
 
 </body>
 
