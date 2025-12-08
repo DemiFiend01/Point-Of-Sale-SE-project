@@ -27,10 +27,10 @@ def role_required(allowed_roles=[]):
         return wrapper
     return decorator
 
-
+#to be rewritten later as a special method for waiters, change the name, add @loginrequited etc
+#completely different rules etc
 def order_create(request):
-    template = loader.get_template("create_order.html")
-    return HttpResponse(template.render())
+    return render(request, "create_order.html")
 
 
 def login_view(request):
@@ -54,7 +54,8 @@ def login_view(request):
 
         if emp._role == Role.MANAGER.name:
             business_emp = Manager(emp._name, emp._login,
-                                   emp._password, Role.MANAGER)
+                                   emp._password, Role.MANAGER) #unsure on how to handle the business class later on, to be implemented
+            #probably it will be contained either as a session variable or just backend method param
             return redirect("manager_dashboard")
         elif emp._role == Role.WAITER.name:
             business_emp = Waiter(emp._name, emp._login,
@@ -78,8 +79,31 @@ def manager_dashboard(request):
             case "Log out":
                 request.session.flush()
                 return redirect("login_site")
-    return render(request, "manager_dashboard.html")
+            case "Manage menu":
+                return redirect("manager_manage_menu")
+            case "Generate report":
+                return redirect("manager_generate_report")
+            case "View archived orders":
+                return redirect("manager_archived_orders")
+            case "Manage employees":
+                return redirect("manager_manage_emp")
+    return render(request, "Manager_dashboard.html")
 
+@role_required(allowed_roles=[Role.MANAGER.name])
+def manager_manage_menu(request): #to be implemented, add returning
+    return render(request,"Manager_manage_menu.html")
+
+@role_required(allowed_roles=[Role.MANAGER.name])
+def manager_generate_report(request): #to be implemented, add returning
+    return render(request,"Manager_generate_report.html")
+
+@role_required(allowed_roles=[Role.MANAGER.name])
+def manager_archived_orders(request): #to be implemented, add returning
+    return render(request,"Manager_archived_orders.html")
+
+@role_required(allowed_roles=[Role.MANAGER.name])
+def manager_manage_emp(request): #to be implemented, add returning
+    return render(request,"Manager_manage_emp.html")
 
 @role_required(allowed_roles=[Role.WAITER.name])
 def waiter_dashboard(request):
@@ -89,7 +113,7 @@ def waiter_dashboard(request):
             case "Log out":
                 request.session.flush()
                 return redirect("login_site")
-    return render(request,"waiter_dashboard.html")
+    return render(request,"Waiter_dashboard.html")
 
 
 @role_required(allowed_roles=[Role.COOK.name])
@@ -100,7 +124,7 @@ def cook_dashboard(request):
             case "Log out":
                 request.session.flush() #log out basically, will not be able to access any sites basically 
                 return redirect("login_site")
-    return render(request,"cook_dashboard.html")
+    return render(request,"Cook_dashboard.html")
 
 
 def order_detail(request, order_id):

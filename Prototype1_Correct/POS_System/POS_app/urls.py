@@ -3,12 +3,16 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
+    path('', views.login_view, name='login_site'), #the data will be sent here from the html template?
     path('orders/new/', views.order_create, name='order_create'),
     path('orders/<int:order_id>/', views.order_detail, name='order_detail'),
     # apparently set automatically, so that is the warning
     path('admin/', admin.site.urls),
     path('manager/', views.manager_dashboard, name='manager_dashboard'),
+    path('manager/manage_menu/', views.manager_manage_menu, name ='manager_manage_menu'),
+    path('manager/generate_report/', views.manager_generate_report, name ='manager_generate_report'),
+    path('manager/archived_orders/', views.manager_archived_orders, name ='manager_archived_orders'),
+    path('manager/manage_employees/', views.manager_manage_emp, name ='manager_manage_emp'),
     path('waiter/', views.waiter_dashboard, name='waiter_dashboard'),
-    path('cook/', views.cook_dashboard, name='cook_dashboard'),
-    path('', views.login_view, name='login_site') #the data will be sent here from the html template?
+    path('cook/', views.cook_dashboard, name='cook_dashboard')
 ]
