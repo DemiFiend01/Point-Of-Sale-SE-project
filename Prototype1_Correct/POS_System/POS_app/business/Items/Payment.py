@@ -42,11 +42,12 @@ class Receipt:
 
 class Payment:
     def __init__(self, id: str, method: str, amount: Money, receipt_num: int):
-        self._id = id  # string order id? most probably
+        self._id = id  # string order id? most probably to be verified with time and django models
         self._method = method  # string 'Cash', 'Card' maybe could be Enum later
         self._amount = amount  # Money
         self._paid_at = datetime.datetime  # datetime | none
-        self._receipt_number = receipt_num  # int
+        # int, but kinda useless, what is the difference between this and id?
+        self._receipt_number = receipt_num
 
     def _generate_receipt(self) -> Receipt:  # protected method, returns Receipt
         lines = 1
