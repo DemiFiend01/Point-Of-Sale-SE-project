@@ -1,15 +1,20 @@
+from django.shortcuts import render
+from django.shortcuts import redirect
 from POS_app.business.Actors.User import Role
 #will for sure need to add Order and Menu and Waiter later on
+#also remember about implementing logic inside the Services
 from POS_app.views import role_required
 
-@role_required(allowed_roles=[Role.WAITER.name])
-def waiter_cancel_order(request):
-    print("")
 
 class PaymentPanel:
     def __init__(self):
         print("needs GUI")
 
+    @staticmethod
+    @role_required(allowed_roles=[Role.WAITER.name])
+    def waiter_payment(request):
+        return render(request, "waiter/Waiter_payment.html")
+    
     def _list_ready_orders(self):  # protected method
         print("Based on database data list all orders ready for payment")
 

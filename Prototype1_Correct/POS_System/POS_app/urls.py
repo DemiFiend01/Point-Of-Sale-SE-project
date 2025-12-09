@@ -1,6 +1,11 @@
 from django.urls import include, path
 from django.contrib import admin
 from . import views
+from .business.Panels.KitchenProcessingPanel import KitchenProcessingPanel
+from .business.Panels.MenuManagmentPanel import MenuManagementPanel
+from .business.Panels.OrderCreationPanel import OrderCreationPanel
+from .business.Panels.OrderHistoryPanel import OrderHistoryPanel
+from .business.Panels.PaymentPanel import PaymentPanel
 
 urlpatterns = [
     path('', views.login_view, name='login_site'), #the data will be sent here from the html template?
@@ -13,7 +18,11 @@ urlpatterns = [
     path('manager/manage_employees/', views.manager_manage_emp, name ='manager_manage_emp'),
     path('waiter/', views.waiter_dashboard, name='waiter_dashboard'),
     path('waiter/manage_orders/', views.waiter_manage_orders, name='waiter_manage_orders'),
-    #implement all the waiter paths
+    path('waiter/create_order/', OrderCreationPanel.waiter_create_order, name='waiter_create_order'),
+    path('waiter/mark_delivered/', OrderCreationPanel.waiter_mark_delivered, name='waiter_mark_delivered'),
+    path('waiter/ready_orders/', OrderCreationPanel.waiter_view_ready_orders, name='waiter_view_ready_orders'),
+    path('waiter/cancel_order/', OrderCreationPanel.waiter_cancel_order, name='waiter_cancel_order'),
+    path('waiter/process_payment/', PaymentPanel.waiter_payment, name='waiter_payment'),
     path('cook/', views.cook_dashboard, name='cook_dashboard'),
     path('cook/view_pending_orders/', views.cook_pending_orders, name='cook_pending_orders'),
     path('cook/mark_order_ready', views.cook_mark_order_ready, name='cook_mark_order_ready'),

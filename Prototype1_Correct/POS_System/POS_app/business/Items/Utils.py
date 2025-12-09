@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from POS_app.business.Items.Order import Order
 
-
 class PreparationTimeEstimator:
     @staticmethod
     def estimate(order: "Order") -> int:  # public method
@@ -32,8 +31,7 @@ class IDGenerator:
         self.curr_order_id = 0
         self.today = datetime.datetime.today()
 
-    @staticmethod
-    def order_id_generator(self, order: "Order") -> int:
+    def order_id_generator(self) -> int:
         today = datetime.datetime.today()
         if today != self.today:
             self.curr_order_id = 0
@@ -45,3 +43,6 @@ class IDGenerator:
             self.curr_order_id == 1
 
         return self.curr_order_id
+
+
+IDGenerate = IDGenerator()

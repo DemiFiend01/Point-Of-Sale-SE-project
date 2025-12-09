@@ -159,7 +159,3 @@ def cook_mark_order_ready(request): #to be frank, this should not be a seperate 
 @role_required(allowed_roles=[Role.COOK.name])
 def cook_mark_item_ready(request): 
     return render(request, "cook/Cook_mark_item_as_ready.html")
-
-
-def POS_app(request):
-    return HttpResponse("Hello world!")
