@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Manage orders</h1>
+<p>There will be many many panels and buttons and further redirections</p>
+<form method="POST" action="{% url 'waiter_manage_orders' %}">
+        {% csrf_token %}
+        <button type="submit" name="action" value="Go back">Go back</button>
+        <button type="submit" name="action" value="Create new order">Create new order</button>
+        <button type="submit" name="action" value="View ready orders">View ready orders</button>
+        <button type="submit" name="action" value="Mark order as delivered">Mark order as delivered</button>
+        <button type="submit" name="action" value="Process payment">Process payment</button>
+        <button type="submit" name="action" value="Cancel an order">Cancel an order</button>
+    </form>
+
+</body>
+</html>

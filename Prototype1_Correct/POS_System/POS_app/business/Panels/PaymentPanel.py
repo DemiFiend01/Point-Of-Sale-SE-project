@@ -1,3 +1,11 @@
+from POS_app.business.Actors.User import Role
+#will for sure need to add Order and Menu and Waiter later on
+from POS_app.views import role_required
+
+@role_required(allowed_roles=[Role.WAITER.name])
+def waiter_cancel_order(request):
+    print("")
+
 class PaymentPanel:
     def __init__(self):
         print("needs GUI")

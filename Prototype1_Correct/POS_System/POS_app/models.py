@@ -1,19 +1,34 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 import POS_app.business.Actors.User as user
 import POS_app.business.Items.Payment as payment
 import POS_app.business.Items.Utils as utils
 # Create your models here.
 
+characters = ['!', '@', '$', '&', '*', '_']
+def has_appropriate_characters(text: str):
+    return any(char in characters for char in text) #does text contain any of those chars?
 
+def has_numbers(text: str):
+    return any(char.isdigit() for char in text)
+
+def password_validator(value: str):
+    if len(value) < 8: #the password must be at least 8 letters long
+        raise ValidationError("The password is too short.")
+    elif (has_appropriate_characters(value) ==  False):
+        raise ValidationError("Please input at least one of the following: '!', '@', '$', '&', '*', '_'.")
+    elif (has_numbers(value) == False):
+        raise ValidationError("Please insert at least one number.")
+    
 class Employees(models.Model):
     e_id = models.AutoField(primary_key=True, serialize=False,
                             verbose_name="Employee ID")  # no need for BigAutoField
     _name = models.CharField(max_length=255, verbose_name="Employee Name")
-    _login = models.CharField(
+    _login = models.EmailField(
         max_length=255, unique=True, verbose_name="Login")  # unique logins
-    _password = models.CharField(max_length=255, verbose_name="Password")
+    _password = models.CharField(max_length=255, validators=[password_validator],verbose_name="Password")
     _role = models.CharField(
         max_length=50,
         choices=[(r.name, r.value) for r in user.Role], verbose_name="Employee Role"
@@ -68,7 +83,7 @@ class Orders(models.Model):
 class MenuItems(models.Model):
     m_id = models.AutoField(
         primary_key=True, serialize=False, verbose_name="Menu Item ID")
-    name = models.CharField(max_length=255, verbose_name="Name")
+    name = models.CharField(max_length=255, unique=True, verbose_name="Name") #can't have two burgers with just a different price lol
     price = models.DecimalField(max_digits=5, decimal_places=2, validators=[MinValueValidator(
         0)], verbose_name="Price")  # cannot be negative, basically Float
     currency = models.CharField(max_length=20, choices=[(
