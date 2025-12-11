@@ -1,8 +1,10 @@
 # Point-Of-Sale-SE-project
 CLASS DIAGRAM
+
 <img width="3261" height="1611" alt="POS_class_diagram" src="https://github.com/user-attachments/assets/e14651b1-e2a3-4998-ae69-d3874e76d5f7" />
 
 DATABASE DIAGRAM
+
 <img width="798" height="1091" alt="POS_django_models" src="https://github.com/user-attachments/assets/cc58465d-db50-4ac4-bb4e-b5fb61f6be47" />
 
 Django based with PostgreSQL database project.
