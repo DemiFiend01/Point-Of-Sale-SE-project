@@ -22,7 +22,7 @@ class MenuManagementPanel:  # for manager to use
                     values = (request.POST.get("name"), 
                               request.POST.get("price"), 
                               request.POST.get("prep_time_min"), 
-                              True if request.POST.get("active") in ("on", "true", "1") else False, 
+                              request.POST.get("active"), 
                               request.POST.get("course"), 
                               request.POST.get("tax"))
                     result = self._add_product(values)

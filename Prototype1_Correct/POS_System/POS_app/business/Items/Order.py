@@ -23,9 +23,9 @@ class OrderItem:
         return self._quantity * self._unit_price * (1 + self._menu_item._tax)
 
 
-# basically yhis can be 1 or more order items packed together as like one set of servable dishes.
+# basically this can be 1 or more order items packed together as like one set of servable dishes.
 # ex. someone orders: (soup), (dinner and drinks), (beer), (ice cream, cake). You would prefer all of those dishes to be grouped together probably
-class ServingRule:  # i do not quite get how this works. maybe a list of pairs would be a better fit?
+class ServingRule:  
     def __init__(self, position: int, course: str, items: list[OrderItem]):
         self._position = position
         self._course = course
