@@ -26,10 +26,15 @@ class MenuService:
         except Exception as e:
             return {"error": str(e)}
         
-    def _remove(self, item_id: str):  # protected method
-        print("search for the id in the database and remove an item from the menu")
+    def _remove(self, menu_id):  # protected method
+        try:
+            item_to_delete = MenuItems.objects.get(m_id=menu_id)
+            item_to_delete.delete()
+            return {"success": "Successfully deleted"}
+        except Exception as e:
+            return {"error": str(e)}
 
-    def _find_item(self, item_id):  # protected method
+    def _find_item(self, item_id):  # protected method changed the name from _find to _find_item for clarity
         try:
             menu_item = MenuItems.objects.get(m_id=item_id)
             return {
@@ -65,6 +70,3 @@ class MenuService:
         else:
             menu_items = MenuItems.objects.all().filter(name = _name).order_by("-name")
         return menu_items
-
-    def _find(self) -> list[MenuItem.MenuItem]:  # protected method
-        print("To be extended and specified. By providing some criteria, find the fitting menu items")

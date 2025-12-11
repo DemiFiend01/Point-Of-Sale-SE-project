@@ -19,34 +19,12 @@
     <br>
     <label>Tax:<input type="number" step="0.1" name="tax" value="{% if tax %}{{ tax }}{% endif %}">%</label>
     <br>
-    <button type="submit" name="action" value="edit">Save</button>
-    <button name="action" value="go_back">Go back</button>
+    <button type="submit" name="action" value="save">Save</button>
+    <button name="action" value="go_back_sub_menu">Go back</button>
 
 </form>
     
 </body>
-<dialog id="addDialog">
-    <form method="post">
-        {% csrf_token %}
-
-        <h3>Add menu item</h3>
-        <label>Name:<input type="text" name="name"></label>
-        <br>
-        <label>Price:<input type="number" step="1" name="price" value="1"> PLN</label>
-        <br>
-        <label>Minimal preparation time:<input type="number" step="1" name="min_prep_time" value="1"> min.</label>
-        <br>
-        <label>Active?<input type="checkbox" name="active" checked ></label>
-        <br>
-        <label>Course:<input type="text" name="course"></label>
-        <br>
-        <label>Tax:<input type="number" step="0.1" name="tax" value="8">%</label>
-        <br>
-        <button type="submit" name="action" value="add">Save</button>
-        <button formmethod="dialog">Cancel</button>
-        
-    </form>
-</dialog>
 {% if error %}
     <p style="color:red">{{error}}</p>
 {% endif %}

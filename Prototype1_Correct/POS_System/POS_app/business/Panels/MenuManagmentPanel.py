@@ -40,15 +40,54 @@ class MenuManagementPanel:  # for manager to use
                         context = {
                                 "m_id": selected,
                                 "name": result["name"], 
-                                   "price": result["price"], 
-                                   "prep_time_min": result["prep_time_min"],
+                                "price": result["price"], 
+                                "prep_time_min": result["prep_time_min"],
                                     "active": result["active"],
                                     "course": result["course"],
                                     "tax": result["tax"]}
-                        return self._edit_product(request,context,selected)
-                        #right now on go_back it goes back to manager_dashboard, just implement a link lol or something
+                        return self._edit_product(request,context)
+                        
+                case "save": #from a subsite for editing
+                    #read the menu_id from a hidden field inside
+                    menu_id = request.POST.get("m_id")
+    
+                    values = {
+                        "name": request.POST.get("name"),
+                        "price": float(request.POST.get("price")),
+                        "prep_time_min": int(request.POST.get("prep_time_min")),
+                        "active": True if request.POST.get("active") in ("on", "true", "1") else False,
+                        "course": request.POST.get("course"),
+                        "tax": float(request.POST.get("tax"))
+                    }
+                    
+                    #database work in the service, returns whether worked or not
+                    result = self._menu_service._update(menu_id, values)
+                    
+                    context = {
+                        "m_id": menu_id,
+                        "name": values["name"],
+                        "price": values["price"],
+                        "prep_time_min": values["prep_time_min"],
+                        "active": values["active"],
+                        "course": values["course"],
+                        "tax": values["tax"]
+                    }
+                    if "error" in result:
+                        context["error"] = result["error"]
+                    elif "success" in result:
+                        context["success"] = result["success"]
+                    
+                    return render(request, "manager/Manager_manage_menu_edit.html", context)
+                case "go_back_sub_menu": #from a subsite for editing
+                        return redirect('manager_manage_menu')    
                 case "delete":
-                    return redirect("manager_dashboard")
+                    selected = request.POST.get("selected_item_id")
+                    result = self._menu_service._remove(selected)
+                    if "error" in result:
+                        errors = result["error"]
+                    elif "success" in result:
+                        success = result["success"]
+                    #return redirect("manager_dashboard")
                 case "go_back":
                     return redirect('manager_dashboard')
 
@@ -65,33 +104,17 @@ class MenuManagementPanel:  # for manager to use
     def _find_product(self, item_id):
         return self._menu_service._find_item(item_id)
     
-    def _edit_product(self, request, menu_item, menu_id):
-        if (request.method == "POST" and request.POST.get("action") == "edit"):
-            action = request.POST.get("action")
-            match action:
-                case "edit":
-                    values = {
-                                "name": request.POST.get("name") or menu_item["name"],
-                                "price": float(request.POST.get("price")) if request.POST.get("price") else menu_item["price"],
-                                "prep_time_min": int(request.POST.get("prep_time_min")) if request.POST.get("prep_time_min") else menu_item["prep_time_min"],
-                                "active": True if request.POST.get("active") in ("on","true","1") else menu_item["active"],
-                                "course": request.POST.get("course") or menu_item["course"],
-                                "tax": float(request.POST.get("tax")) if request.POST.get("tax") else menu_item["tax"]
-                            }
-                    print("id: ",menu_id," values",values)
-                    result = self._menu_service._update(menu_id, values)
-                    if "error" in result:
-                        menu_item["error"] = result["error"]
-                    elif "success" in result:
-                        menu_item["success"] = result["success"]
-                    return render(request, "manager/Manager_manage_menu_edit.html", menu_item)
-
-                case "go_back":
-                    return redirect('manager_manage_menu')    
+    def _edit_product(self, request, menu_item):
+        #just render the site, the logic is handled in the menu
         return render(request, "manager/Manager_manage_menu_edit.html", menu_item)
     
-    def _remove_product(self):  # protected method
-        print("removing product")
+    def _remove_product(self, item_id):  # protected method
+        result = self._find_product(item_id)
+        if "error" in result:
+                return result["error"]
+        
+
+        return self._menu_service._remove(item_id)
 
     def _list_menu(self, filter: str | None):  # protected method
         return self._menu_service._list(filter) #no returning of exceptions, need to add that
