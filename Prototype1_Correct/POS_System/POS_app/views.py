@@ -16,14 +16,62 @@ from functools import wraps
 # special method to wrap the view methods to restrict access for specific roles
 
 
-def role_required(allowed_roles=[]):
+# def role_required(allowed_roles=[]):
+#     def decorator(view_func):
+#         @wraps(view_func)
+#         def wrapper(request, *args, **kwargs):
+#             request = args[0] if hasattr(args[0], "session") else args[1]
+
+#             if request.session.get("user_role") not in allowed_roles:
+#                 return redirect("login_site")  # redirect if unauthorized
+#             return view_func(request, *args, **kwargs)
+#         return wrapper
+#     return decorator
+
+# def role_required(allowed_roles=None):
+#     if allowed_roles is None:
+#         allowed_roles = []
+
+#     def decorator(view_func):
+#         @wraps(view_func)
+#         def wrapper(*args, **kwargs):
+#             # Case 1: function-based view → (request)
+#             if hasattr(args[0], "session"):
+#                 request = args[0]
+#                 return view_func(*args, **kwargs)
+#             # Case 2: instance method → (self, request)
+#             elif len(args) > 1 and hasattr(args[1], "session"):
+#                 request = args[1]
+#                 self = args[0]
+
+#                 if request.session.get("user_role") not in allowed_roles:
+#                     return redirect("login_site")
+
+#                 return view_func(self, request, *args[2:], **kwargs)
+#             return redirect("login_site")
+#         return wrapper
+#     return decorator
+
+def role_required(allowed_roles=None):
+    if allowed_roles is None:
+        allowed_roles = []
+
     def decorator(view_func):
         @wraps(view_func)
-        def wrapper(request, *args, **kwargs):
-            user_role = request.session.get("user_role")
-            if user_role not in allowed_roles:
-                return redirect("login_site")  # redirect if unauthorized
-            return view_func(request, *args, **kwargs)
+        def wrapper(*args, **kwargs):
+            # Determine request object
+            request = None
+            if len(args) == 1 and hasattr(args[0], "session"):  # function-based view
+                request = args[0]
+            elif len(args) >= 2 and hasattr(args[1], "session"):  # instance method
+                request = args[1]
+
+            if request is None or request.session.get("user_role") not in allowed_roles:
+                return redirect("login_site")
+
+            # Call original function, propagate whatever it returns (render, redirect, etc.)
+            return view_func(*args, **kwargs)
+
         return wrapper
     return decorator
 
@@ -84,9 +132,7 @@ def manager_dashboard(request):
     return render(request, "manager/Manager_dashboard.html")
 
 #all of those methods will call the appropriate business panels or they can be rewritten to be inside of those panels in some way!!!!
-@role_required(allowed_roles=[Role.MANAGER.name])
-def manager_manage_menu(request): #to be implemented, add returning
-    return render(request,"manager/Manager_manage_menu.html")
+
 
 @role_required(allowed_roles=[Role.MANAGER.name])
 def manager_generate_report(request): #to be implemented, add returning

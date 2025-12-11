@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from POS_app.business.Items import Order
 from POS_app.business.Actors.User import Role
 from POS_app.business.Items.Utils import IDGenerate
+from POS_app.business.Services import OrderService
 #will for sure need to add Order and Menu and Waiter later on
 from POS_app.views import role_required
 
@@ -11,10 +12,10 @@ from POS_app.views import role_required
 #maybe make some functions static? if not all
 class OrderCreationPanel:
     def __init__(self):
-        print("Need to implement Gui")   
+        self._order_service = OrderService.OrderService()
+        print("This class will have methods that will handle the GUI and call the appropriate methods of the service which will manage the DB")   
         
-    #those methods here are not inside the class diagram, but adding them as static methods helps to organise this class
-    @staticmethod
+    #those methods here are not inside the class diagram
     @role_required(allowed_roles=[Role.WAITER.name])
     def waiter_create_order(request):
         order_number = IDGenerate.order_id_generator()
@@ -22,18 +23,15 @@ class OrderCreationPanel:
         #better to stay in this method to avoid further complications
         return render(request, "waiter/Waiter_create_order.html")
 
-    @staticmethod
     @role_required(allowed_roles=[Role.WAITER.name])
     def waiter_mark_delivered(request):
         print("There will be a list of all orders that were readied by the cooks.")
         return render(request, "waiter/Waiter_mark_delivered.html")
 
-    @staticmethod
     @role_required(allowed_roles=[Role.WAITER.name])
     def waiter_view_ready_orders(request):
         return render(request, "waiter/Waiter_view_ready.html")
     
-    @staticmethod
     @role_required(allowed_roles=[Role.WAITER.name])
     def waiter_cancel_order(request):
         #list of all unfinished orders, can select one to cancel
@@ -60,3 +58,5 @@ class OrderCreationPanel:
 
     def _set_serving_sequence(self):  # protected method
         print("setting a serving sequence for an order")
+
+MyOrderCreationPanel = OrderCreationPanel()
