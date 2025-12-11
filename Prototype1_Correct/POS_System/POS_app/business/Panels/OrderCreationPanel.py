@@ -17,25 +17,26 @@ class OrderCreationPanel:
         
     #those methods here are not inside the class diagram
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_create_order(request):
+    def waiter_create_order(self,request):
         order_number = IDGenerate.order_id_generator()
         #there is no need for a redirect to a orders/id other than pure visuals
         #better to stay in this method to avoid further complications
         return render(request, "waiter/Waiter_create_order.html")
 
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_mark_delivered(request):
+    def waiter_mark_delivered(self,request):
         print("There will be a list of all orders that were readied by the cooks.")
         return render(request, "waiter/Waiter_mark_delivered.html")
 
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_view_ready_orders(request):
+    def waiter_view_ready_orders(self,request):
         return render(request, "waiter/Waiter_view_ready.html")
     
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_cancel_order(request):
+    def waiter_cancel_order(self,request):
         #list of all unfinished orders, can select one to cancel
         return render(request, "waiter/Waiter_cancel_order.html")
+    
     # those methods will probably be callbacks from buttons/panels that need to be initiated
     def _start_order(self):  # protected method #waiter_create_order
         #call add product, set takeaway etc 

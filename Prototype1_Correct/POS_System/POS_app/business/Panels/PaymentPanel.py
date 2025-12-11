@@ -13,7 +13,7 @@ class PaymentPanel:
         print("This class will have methods that call the service and return templates to view")
 
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_payment(request):
+    def waiter_payment(self,request):
         return render(request, "waiter/Waiter_payment.html")
     
     def _list_ready_orders(self):  # protected method
