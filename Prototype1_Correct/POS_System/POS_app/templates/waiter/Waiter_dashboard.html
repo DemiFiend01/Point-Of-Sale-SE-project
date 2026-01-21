@@ -1,16 +1,96 @@
-<!DOCTYPE html>
-<html>
+{% extends "layouts/app_base.html" %}
 
-<body>
+{% block title %}Waiter • POS{% endblock %}
+{% block page_header %}Waiter Dashboard{% endblock %}
 
-    <h1>Hello waiter {{ request.session.user_name }}</h1>
-    <p>DASHBOARD</p>
-    <form method="POST" action="{% url 'waiter_dashboard' %}">
-        {% csrf_token %}
-        <button type="submit" name="action" value="Log out">Log out</button>
-        <button type="submit" name="action" value="Manage orders">Manage orders</button>
-    </form>
+{% block content %}
 
-</body>
+<div class="mb-4">
+    <h4 class="fw-semibold">
+        Hello waiter {{ request.session.user_name }}
+    </h4>
+    <p class="text-muted mb-0">
+        Orders and customer service dashboard
+    </p>
+</div>
 
-</html>
+<div class="row g-3">
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Create new order</h5>
+                <p class="card-text text-muted">Start a new customer order.</p>
+                <form method="POST" action="{% url 'waiter_dashboard' %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="Create new order" class="btn btn-outline-primary">
+                        Create new order
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">View ready orders</h5>
+                <p class="card-text text-muted">See orders ready to deliver.</p>
+                <form method="POST" action="{% url 'waiter_dashboard' %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="View ready orders" class="btn btn-outline-primary">
+                        View ready orders
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Mark order as delivered</h5>
+                <p class="card-text text-muted">Confirm delivery to customer.</p>
+                <form method="POST" action="{% url 'waiter_dashboard' %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="Mark order as delivered" class="btn btn-outline-success">
+                        Mark delivered
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Process payment</h5>
+                <p class="card-text text-muted">Take payment and close an order.</p>
+                <form method="POST" action="{% url 'waiter_dashboard' %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="Process payment" class="btn btn-outline-success">
+                        Process payment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Cancel an order</h5>
+                <p class="card-text text-muted">Cancel an existing order.</p>
+                <form method="POST" action="{% url 'waiter_dashboard' %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="Cancel an order" class="btn btn-outline-danger">
+                        Cancel order
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

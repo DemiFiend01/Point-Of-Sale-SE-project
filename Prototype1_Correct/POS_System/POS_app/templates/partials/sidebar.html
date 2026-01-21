@@ -1,0 +1,80 @@
+{% with role=request.session.user_role %}
+<aside class="app-sidebar bg-white border-end">
+  <div class="p-3 border-bottom">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge text-bg-primary rounded-pill">POS</span>
+      <div class="fw-semibold">Dashboard</div>
+    </div>
+    <div class="small text-muted mt-1">
+      {% if role %}Role: {{ role }}{% else %}Not logged in{% endif %}
+    </div>
+  </div>
+
+  <nav class="p-2">
+    <div class="small text-uppercase text-muted px-2 mt-2">Main</div>
+
+    {% if role == "MANAGER" %}
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'manager_dashboard' %}">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'manager_manage_menu' %}">
+        <i class="bi bi-card-list"></i> Manage menu
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'manager_manage_emp' %}">
+        <i class="bi bi-people"></i> Manage employees
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'manager_archived_orders' %}">
+        <i class="bi bi-archive"></i> Archived orders
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'manager_generate_report' %}">
+        <i class="bi bi-graph-up"></i> Generate report
+      </a>
+
+    {% elif role == "COOK" %}
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'cook_dashboard' %}">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'cook_pending_orders' %}">
+        <i class="bi bi-list-check"></i> Pending orders
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'cook_mark_order_ready' %}">
+        <i class="bi bi-check2-square"></i> Mark order ready
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'cook_mark_item_ready' %}">
+        <i class="bi bi-check2-circle"></i> Mark item ready
+      </a>
+
+    {% elif role == "WAITER" %}
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'waiter_dashboard' %}">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'waiter_create_order' %}">
+        <i class="bi bi-plus-circle"></i> Create order
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'waiter_view_ready_orders' %}">
+        <i class="bi bi-eye"></i> Ready orders
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'waiter_mark_delivered' %}">
+        <i class="bi bi-truck"></i> Mark delivered
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'waiter_payment' %}">
+        <i class="bi bi-credit-card"></i> Payment
+      </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2" href="{% url 'waiter_cancel_order' %}">
+        <i class="bi bi-x-circle"></i> Cancel order
+      </a>
+
+    {% else %}
+      <span class="nav-link text-muted px-2 py-2">Not logged in</span>
+    {% endif %}
+
+    <hr class="my-3">
+
+    {% if role %}
+      <a class="nav-link d-flex align-items-center gap-2 rounded px-2 py-2 text-danger" href="{% url 'logout_site' %}">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </a>
+    {% endif %}
+  </nav>
+</aside>
+{% endwith %}

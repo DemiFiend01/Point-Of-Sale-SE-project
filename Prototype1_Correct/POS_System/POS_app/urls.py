@@ -10,6 +10,7 @@ from .business.Panels.PaymentPanel import MyPaymentPanel
 urlpatterns = [
     path('', views.login_view, name='login_site'), #the data will be sent here from the html template?
     # apparently set automatically, so that is the warning
+    path("logout/", views.logout_view, name="logout_site"),
     path('admin/', admin.site.urls),
     path('manager/', views.manager_dashboard, name='manager_dashboard'),
     path('manager/manage_menu/', MyMenuManagementPanel.manager_manage_menu, name ='manager_manage_menu'),
@@ -17,7 +18,6 @@ urlpatterns = [
     path('manager/archived_orders/', views.manager_archived_orders, name ='manager_archived_orders'),
     path('manager/manage_employees/', views.manager_manage_emp, name ='manager_manage_emp'),
     path('waiter/', views.waiter_dashboard, name='waiter_dashboard'),
-    path('waiter/manage_orders/', views.waiter_manage_orders, name='waiter_manage_orders'),
     path('waiter/create_order/', MyOrderCreationPanel.waiter_create_order, name='waiter_create_order'),
     path('waiter/mark_delivered/', MyOrderCreationPanel.waiter_mark_delivered, name='waiter_mark_delivered'),
     path('waiter/ready_orders/', MyOrderCreationPanel.waiter_view_ready_orders, name='waiter_view_ready_orders'),

@@ -1,18 +1,79 @@
-<!DOCTYPE html>
-<html>
+{% extends "layouts/app_base.html" %}
 
-<body>
+{% block title %}Cook • POS{% endblock %}
+{% block page_header %}Cook Dashboard{% endblock %}
 
-    <h1>Hello cook {{ request.session.user_name }}</h1>
-    <p>DASHBOARD</p>
-    <form method="POST" action="{% url 'cook_dashboard' %}">
-        {% csrf_token %}
-        <button type="submit" name="action" value="Log out">Log out</button>
-        <button type="submit" name="action" value="View pending orders">View pending orders</button>
-        <button type="submit" name="action" value="Mark order as ready">Mark order as ready</button>
-        <button type="submit" name="action" value="Mark item as ready">Mark item as ready</button>
-    </form>
+{% block content %}
 
-</body>
+<div class="mb-4">
+    <h4 class="fw-semibold">
+        Hello cook {{ request.session.user_name }}
+    </h4>
+    <p class="text-muted mb-0">
+        Kitchen operations dashboard
+    </p>
+</div>
 
-</html>
+<div class="row g-3">
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Pending orders</h5>
+                <p class="card-text text-muted">
+                    View all orders waiting to be prepared.
+                </p>
+                <form method="POST" action="{% url 'cook_dashboard' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            name="action"
+                            value="View pending orders"
+                            class="btn btn-outline-primary">
+                        View pending orders
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Order status</h5>
+                <p class="card-text text-muted">
+                    Mark whole orders as ready.
+                </p>
+                <form method="POST" action="{% url 'cook_dashboard' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            name="action"
+                            value="Mark order as ready"
+                            class="btn btn-outline-success">
+                        Mark order as ready
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Item status</h5>
+                <p class="card-text text-muted">
+                    Mark individual items as ready.
+                </p>
+                <form method="POST" action="{% url 'cook_dashboard' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            name="action"
+                            value="Mark item as ready"
+                            class="btn btn-outline-success">
+                        Mark item as ready
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

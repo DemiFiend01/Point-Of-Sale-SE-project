@@ -113,6 +113,10 @@ def login_view(request):
     return render(request, "login.html")
 
 
+def logout_view(request):
+    request.session.flush()
+    return redirect("login_site")
+
 @role_required(allowed_roles=[Role.MANAGER.name])
 def manager_dashboard(request):
     if (request.method == "POST"):
@@ -148,35 +152,34 @@ def manager_manage_emp(request): #to be implemented, add returning
 
 @role_required(allowed_roles=[Role.WAITER.name])
 def waiter_dashboard(request):
-    if (request.method == "POST"):
+    if request.method == "POST":
         action = request.POST.get("action")
         match action:
             case "Log out":
                 request.session.flush()
                 return redirect("login_site")
-            case "Manage orders":
-                return redirect("waiter_manage_orders")
-    return render(request,"waiter/Waiter_dashboard.html")
 
-#this method will have many more redirections and calls to the appropriate panels further down the line
-@role_required(allowed_roles=[Role.WAITER.name])
-def waiter_manage_orders(request):
-    if(request.method == "POST"):
-        action = request.POST.get("action")
-        match action:
-            case "Go back":
-                return redirect("waiter_dashboard") #go back
             case "Create new order":
                 return redirect("waiter_create_order")
+
             case "View ready orders":
                 return redirect("waiter_view_ready_orders")
+
             case "Mark order as delivered":
                 return redirect("waiter_mark_delivered")
+
             case "Process payment":
                 return redirect("waiter_payment")
+
             case "Cancel an order":
                 return redirect("waiter_cancel_order")
-    return render(request,"waiter/Waiter_manage_orders.html")
+
+            # Optional: if any old button still posts this
+            case "Manage orders":
+                return redirect("waiter_dashboard")
+
+    return render(request, "waiter/Waiter_dashboard.html")
+
 
 @role_required(allowed_roles=[Role.COOK.name])
 def cook_dashboard(request):

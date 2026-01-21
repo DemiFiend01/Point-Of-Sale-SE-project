@@ -1,19 +1,79 @@
-<!DOCTYPE html>
-<html>
+{% extends "layouts/app_base.html" %}
 
-<body>
+{% block title %}Manager • POS{% endblock %}
+{% block page_header %}Manager Dashboard{% endblock %}
 
-    <h1>Hello manager {{ request.session.user_name }}</h1>
-    <p>DASHBOARD</p>
-    <form method="POST" action="{% url 'manager_dashboard' %}">
-        {% csrf_token %}
-        <button type="submit" name="action" value="Log out">Log out</button>
-        <button type="submit" name="action" value="Manage menu">Manage menu</button>
-        <button type="submit" name="action" value="Generate report">Generate report</button>
-        <button type="submit" name="action" value="View archived orders">View archived orders</button>
-        <button type="submit" name="action" value="Manage employees">Manage employees</button>
-    </form>
+{% block content %}
 
-</body>
+<div class="mb-4">
+  <h4 class="fw-semibold">
+    Hello, {{ request.session.user_name }}
+  </h4>
+  <p class="text-muted mb-0">
+    Manage restaurant operations and view reports.
+  </p>
+</div>
 
-</html>
+<div class="row g-3">
+  <!-- Manage Menu -->
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Menu</h5>
+        <p class="card-text text-muted">
+          Add, edit, and remove menu items.
+        </p>
+        <a href="{% url 'manager_manage_menu' %}" class="btn btn-outline-primary">
+          Manage menu
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports -->
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Reports</h5>
+        <p class="card-text text-muted">
+          Generate sales and performance reports.
+        </p>
+        <a href="{% url 'manager_generate_report' %}" class="btn btn-outline-primary">
+          Generate report
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Archived Orders -->
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Orders</h5>
+        <p class="card-text text-muted">
+          View archived and completed orders.
+        </p>
+        <a href="{% url 'manager_archived_orders' %}" class="btn btn-outline-primary">
+          View archived orders
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employees -->
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Employees</h5>
+        <p class="card-text text-muted">
+          Add and manage employee accounts.
+        </p>
+        <a href="{% url 'manager_manage_emp' %}" class="btn btn-outline-primary">
+          Manage employees
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
