@@ -41,10 +41,15 @@ class Employees(models.Model):
         # if we want to check the hashed password with the unhashed that the user just gave us
         return check_password(raw_pass, self._password)
 
+    @property
+    def name(self):
+        return self._name
+
     def save(self, *args, **kwargs):  # override the default Django method
         if not self._password.startswith('pbkdf2_'):  # default hashing method
             self._password = make_password(self._password)
         super().save(*args, **kwargs)  # call the default Django method
+
 
 
 class Orders(models.Model):
