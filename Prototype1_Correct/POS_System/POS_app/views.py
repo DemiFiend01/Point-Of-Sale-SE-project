@@ -10,8 +10,9 @@ from .business.Actors.Manager import Manager
 from .business.Actors.Cook import Cook
 from .business.Actors.Waiter import Waiter
 from .business.Actors.User import Role
-
 from functools import wraps
+from .models import Orders
+
 
 # special method to wrap the view methods to restrict access for specific roles
 
@@ -73,7 +74,9 @@ def role_required(allowed_roles=None):
             return view_func(*args, **kwargs)
 
         return wrapper
+
     return decorator
+
 
 def login_view(request):
     if (request.method == "POST"):
@@ -96,8 +99,9 @@ def login_view(request):
 
         if emp._role == Role.MANAGER.name:
             business_emp = Manager(emp._name, emp._login,
-                                   emp._password, Role.MANAGER) #unsure on how to handle the business class later on, to be implemented
-            #probably it will be contained either as a session variable or just backend method param
+                                   emp._password,
+                                   Role.MANAGER)  # unsure on how to handle the business class later on, to be implemented
+            # probably it will be contained either as a session variable or just backend method param
             return redirect("manager_dashboard")
         elif emp._role == Role.WAITER.name:
             business_emp = Waiter(emp._name, emp._login,
@@ -117,6 +121,7 @@ def logout_view(request):
     request.session.flush()
     return redirect("login_site")
 
+
 @role_required(allowed_roles=[Role.MANAGER.name])
 def manager_dashboard(request):
     if (request.method == "POST"):
@@ -135,20 +140,24 @@ def manager_dashboard(request):
                 return redirect("manager_manage_emp")
     return render(request, "manager/Manager_dashboard.html")
 
-#all of those methods will call the appropriate business panels or they can be rewritten to be inside of those panels in some way!!!!
+
+# all of those methods will call the appropriate business panels or they can be rewritten to be inside of those panels in some way!!!!
 
 
 @role_required(allowed_roles=[Role.MANAGER.name])
-def manager_generate_report(request): #to be implemented, add returning
-    return render(request,"manager/Manager_generate_report.html")
+def manager_generate_report(request):  # to be implemented, add returning
+    return render(request, "manager/Manager_generate_report.html")
+
 
 @role_required(allowed_roles=[Role.MANAGER.name])
-def manager_archived_orders(request): #to be implemented, add returning
-    return render(request,"manager/Manager_archived_orders.html")
+def manager_archived_orders(request):  # to be implemented, add returning
+    return render(request, "manager/Manager_archived_orders.html")
+
 
 @role_required(allowed_roles=[Role.MANAGER.name])
-def manager_manage_emp(request): #to be implemented, add returning
-    return render(request,"manager/Manager_manage_emp.html")
+def manager_manage_emp(request):  # to be implemented, add returning
+    return render(request, "manager/Manager_manage_emp.html")
+
 
 @role_required(allowed_roles=[Role.WAITER.name])
 def waiter_dashboard(request):
@@ -187,24 +196,69 @@ def cook_dashboard(request):
         action = request.POST.get("action")
         match action:
             case "Log out":
-                request.session.flush() #log out basically, will not be able to access any sites basically 
+                request.session.flush()
                 return redirect("login_site")
             case "View pending orders":
                 return redirect("cook_pending_orders")
+            # Redirects for other actions can point to the main list for now
             case "Mark order as ready":
-                return redirect("cook_mark_order_ready")
+                return redirect("cook_pending_orders")
             case "Mark item as ready":
-                return redirect("cook_mark_item_ready")
-    return render(request,"cook/Cook_dashboard.html")
+                return redirect("cook_pending_orders")
+    return render(request, "cook/Cook_dashboard.html")
+
 
 @role_required(allowed_roles=[Role.COOK.name])
-def cook_pending_orders(request): #list all pending orders
-    return render(request, "cook/Cook_view_pending_orders.html")
+def cook_pending_orders(request):
+    # 1. Instantiate the Cook Actor using session data
+    cook_actor = Cook(
+        request.session.get("user_name"),
+        request.session.get("user_login"),
+        "",  # Password not needed for this action
+        Role.COOK
+    )
+
+    # 2. Use the Cook Actor to get orders (calls KitchenService -> Database)
+    orders = cook_actor._list_pending_order()
+
+    # 3. Pass the orders to the template
+    return render(request, "cook/Cook_view_pending_orders.html", {"orders": orders})
+
 
 @role_required(allowed_roles=[Role.COOK.name])
-def cook_mark_order_ready(request): #to be frank, this should not be a seperate view. this can be in one big panel like mark items and orders as ready where orders would be auto ready when all items are ready
-    return render(request, "cook/Cook_mark_order_as_ready.html")
+def cook_mark_order_ready(request):
+    if request.method == "POST":
+        # The HTML form must send 'order_id'
+        order_pk = request.POST.get("order_id")
+
+        cook_actor = Cook(request.session.get("user_name"), request.session.get("user_login"), "", Role.COOK)
+
+        try:
+            # Fetch the specific order from the Database
+            order = Orders.objects.get(o_id=order_pk)
+
+            # Use the Cook Actor to perform the logic
+            cook_actor._mark_order_ready(order)
+
+            # Save the change to the database
+            order.save()
+
+        except Orders.DoesNotExist:
+            print(f"Order {order_pk} not found!")
+
+    # Redirect back to the list so the order disappears/updates
+    return redirect("cook_pending_orders")
+
 
 @role_required(allowed_roles=[Role.COOK.name])
-def cook_mark_item_ready(request): 
-    return render(request, "cook/Cook_mark_item_as_ready.html")
+def cook_mark_item_ready(request):
+    if request.method == "POST":
+        order_pk = request.POST.get("order_id")
+        item_pk = request.POST.get("item_id")
+
+        cook_actor = Cook(request.session.get("user_name"), request.session.get("user_login"), "", Role.COOK)
+
+        # Cook Actor -> KitchenService -> DB Update
+        cook_actor._mark_item_ready(order_pk, item_pk)
+
+    return redirect("cook_pending_orders")

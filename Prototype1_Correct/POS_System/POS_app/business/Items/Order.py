@@ -34,8 +34,7 @@ class ServingRule:
 
 class Order:
     def __init__(self, status: Utils.OrderStatus, is_takeaway: bool, scheduled_pick_up: datetime.date, estimated_pick_up: datetime.date, table_no: str, notes: str, waiter: Waiter.Waiter):
-        self.displayed_id = Utils.IDGenerator.orderdisplayed_id_generator(
-            self)  # int from 1 to 99
+        self.displayed_id = Utils.IDGenerate.order_id_generator()  # int from 1 to 99
         self._created_at = datetime.date  # datetime
         self._status = status  # OrderStatus
         self._is_takeaway = is_takeaway  # bool
@@ -47,10 +46,10 @@ class Order:
         # self._order_items = order_items  # list[OrderItem]
         # self._payment = payment  # Payment | none
         # the rest: ready_at, delivered_at, paid_at, archived_at
-        self._ready_at
-        self._delivered_at
-        self._paid_at
-        self._archived_at
+        self._ready_at = None
+        self._delivered_at = None
+        self._paid_at = None
+        self._archived_at = None
 
 # change from menu to order item, it makes more sense to add order items here
     def _add_item(self, orderItems: ServingRule, quantity: int):  # protected method
