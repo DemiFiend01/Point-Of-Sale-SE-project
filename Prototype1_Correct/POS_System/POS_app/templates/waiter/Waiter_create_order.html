@@ -1,9 +1,80 @@
-<!DOCTYPE html>
-<html>
-<body>
+{% extends "layouts/app_base.html" %}
 
-<h1>Create an order</h1>
-<p>A very complicated menu, look into Order_creation_scheme for more</p>
+{% block title %}Waiter - POS{% endblock %}
+{% block page_header %}Create order{% endblock %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="mb-4">
+    <h4 class="fw-semibold">Create order</h4>
+    <p class="text-muted mb-0">Select items and submit to the kitchen.</p>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+<form method="POST" action="{% url 'waiter_create_order' %}">
+    {% csrf_token %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="table_no">Table number</label>
+                    <input class="form-control" id="table_no" name="table_no" type="number" min="1" max="99" />
+                </div>
+                <div class="col-12 col-md-4 d-flex align-items-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="is_takeaway" name="is_takeaway">
+                        <label class="form-check-label" for="is_takeaway">Takeaway</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="notes">Notes</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Course</th>
+                            <th>Price</th>
+                            <th style="width: 120px;">Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in menu_items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.course }}</td>
+                            <td>{{ item.price }}</td>
+                            <td>
+                                <input class="form-control" type="number" min="0" max="99" name="qty_{{ item.m_id }}" value="0">
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-muted">No menu items available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit order</button>
+            <a class="btn btn-outline-secondary ms-2" href="{% url 'waiter_dashboard' %}">Back</a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

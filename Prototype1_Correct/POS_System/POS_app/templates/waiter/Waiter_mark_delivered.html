@@ -1,9 +1,67 @@
-<!DOCTYPE html>
-<html>
-<body>
+{% extends "layouts/app_base.html" %}
+{% load order_extras %}
 
-<h1>Mark order as delivered</h1>
-<p>list from the DB</p>
+{% block title %}Waiter - POS{% endblock %}
+{% block page_header %}Mark delivered{% endblock %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="mb-4">
+    <h4 class="fw-semibold">Mark order as delivered</h4>
+    <p class="text-muted mb-0">Close delivery for ready orders.</p>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Table</th>
+                        <th>Takeaway</th>
+                        <th>Items</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.displayed_id }}</td>
+                        <td>{{ order.table_no }}</td>
+                        <td>{{ order.is_takeaway|yesno:"Yes,No" }}</td>
+                        <td>
+                            {% for item in order_items|get_item:order.o_id %}
+                                {{ item.name }} x{{ item.quantity }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                <span class="text-muted">No items</span>
+                            {% endfor %}
+                        </td>
+                        <td class="text-end">
+                            <form method="POST" action="{% url 'waiter_mark_delivered' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="order_id" value="{{ order.o_id }}">
+                                <button type="submit" class="btn btn-outline-success btn-sm">Mark delivered</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-muted">No ready orders.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a class="btn btn-outline-secondary" href="{% url 'waiter_dashboard' %}">Back</a>
+    </div>
+</div>
+
+{% endblock %}

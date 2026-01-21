@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
-from POS_app.business.Items import Order
 from POS_app.business.Actors.User import Role
-from POS_app.business.Items.Utils import IDGenerate
 from POS_app.business.Services import OrderService
-#will for sure need to add Order and Menu and Waiter later on
+from POS_app.models import MenuItems, ServingRules
 from POS_app.views import role_required
 
 
@@ -18,24 +16,109 @@ class OrderCreationPanel:
     #those methods here are not inside the class diagram
     @role_required(allowed_roles=[Role.WAITER.name])
     def waiter_create_order(self,request):
-        order_number = IDGenerate.order_id_generator()
-        #there is no need for a redirect to a orders/id other than pure visuals
-        #better to stay in this method to avoid further complications
-        return render(request, "waiter/Waiter_create_order.html")
+        menu_items = MenuItems.objects.filter(active=True).order_by("name")
+        errors = None
+        success = None
+
+        if request.method == "POST":
+            is_takeaway = request.POST.get("is_takeaway") == "on"
+            table_no = request.POST.get("table_no")
+            notes = request.POST.get("notes")
+
+            items = []
+            for item in menu_items:
+                raw_qty = request.POST.get(f"qty_{item.m_id}", "").strip()
+                if not raw_qty:
+                    continue
+                try:
+                    quantity = int(raw_qty)
+                except ValueError:
+                    errors = "Please enter numeric quantities."
+                    items = []
+                    break
+                if quantity > 0:
+                    items.append({"menu_item_id": item.m_id, "quantity": quantity})
+
+            if not is_takeaway and not table_no:
+                errors = "Table number is required for dine-in orders."
+            elif errors is None:
+                try:
+                    table_no_value = int(table_no) if table_no else None
+                except ValueError:
+                    errors = "Table number must be a number."
+                    table_no_value = None
+
+                if errors is None:
+                    result = self._order_service.create(
+                        waiter_login=request.session.get("user_login"),
+                        is_takeaway=is_takeaway,
+                        table_no=table_no_value,
+                        notes=notes,
+                        items=items,
+                    )
+                    if "error" in result:
+                        errors = result["error"]
+                    else:
+                        success = f"Order #{result['order'].displayed_id} created."
+
+        context = {
+            "menu_items": menu_items,
+            "error": errors,
+            "success": success,
+        }
+        return render(request, "waiter/Waiter_create_order.html", context)
 
     @role_required(allowed_roles=[Role.WAITER.name])
     def waiter_mark_delivered(self,request):
-        print("There will be a list of all orders that were readied by the cooks.")
-        return render(request, "waiter/Waiter_mark_delivered.html")
+        errors = None
+        success = None
+        if request.method == "POST":
+            order_id = request.POST.get("order_id")
+            if order_id:
+                result = self._order_service.mark_delivered(order_id)
+                if "error" in result:
+                    errors = result["error"]
+                else:
+                    success = result["success"]
+
+        orders = self._order_service.list_ready()
+        order_items = self._build_order_items_map(orders)
+        return render(
+            request,
+            "waiter/Waiter_mark_delivered.html",
+            {"orders": orders, "order_items": order_items, "error": errors, "success": success},
+        )
 
     @role_required(allowed_roles=[Role.WAITER.name])
     def waiter_view_ready_orders(self,request):
-        return render(request, "waiter/Waiter_view_ready.html")
+        orders = self._order_service.list_ready()
+        order_items = self._build_order_items_map(orders)
+        return render(
+            request,
+            "waiter/Waiter_view_ready.html",
+            {"orders": orders, "order_items": order_items},
+        )
     
     @role_required(allowed_roles=[Role.WAITER.name])
     def waiter_cancel_order(self,request):
-        #list of all unfinished orders, can select one to cancel
-        return render(request, "waiter/Waiter_cancel_order.html")
+        errors = None
+        success = None
+        if request.method == "POST":
+            order_id = request.POST.get("order_id")
+            if order_id:
+                result = self._order_service.cancel(order_id)
+                if "error" in result:
+                    errors = result["error"]
+                else:
+                    success = result["success"]
+
+        orders = self._order_service.list_open()
+        order_items = self._build_order_items_map(orders)
+        return render(
+            request,
+            "waiter/Waiter_cancel_order.html",
+            {"orders": orders, "order_items": order_items, "error": errors, "success": success},
+        )
     
     # those methods will probably be callbacks from buttons/panels that need to be initiated
     def _start_order(self):  # protected method #waiter_create_order
@@ -59,5 +142,26 @@ class OrderCreationPanel:
 
     def _set_serving_sequence(self):  # protected method
         print("setting a serving sequence for an order")
+
+    def _build_order_items_map(self, orders):
+        order_ids = [order.o_id for order in orders]
+        if not order_ids:
+            return {}
+
+        rules = (
+            ServingRules.objects.filter(o_id__in=order_ids)
+            .select_related("oi_id__m_id", "o_id")
+            .order_by("position")
+        )
+        order_items = {}
+        for rule in rules:
+            order_items.setdefault(rule.o_id.o_id, []).append(
+                {
+                    "name": rule.oi_id.m_id.name,
+                    "quantity": rule.oi_id.quantity,
+                    "course": rule.course,
+                }
+            )
+        return order_items
 
 MyOrderCreationPanel = OrderCreationPanel()
