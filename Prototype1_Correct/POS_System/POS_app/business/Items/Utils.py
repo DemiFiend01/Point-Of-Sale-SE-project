@@ -29,18 +29,12 @@ class OrderStatus(Enum):
 class IDGenerator:
     def __init__(self):
         self.curr_order_id = 0
-        self.today = datetime.datetime.today()
 
     def order_id_generator(self) -> int:
-        today = datetime.datetime.today()
-        if today != self.today:
-            self.curr_order_id = 0
-            self.today = today
-
         self.curr_order_id += 1
 
-        if self.curr_order_id >= 99:
-            self.curr_order_id == 1
+        if self.curr_order_id > 999:
+            self.curr_order_id = 1
 
         return self.curr_order_id
 
