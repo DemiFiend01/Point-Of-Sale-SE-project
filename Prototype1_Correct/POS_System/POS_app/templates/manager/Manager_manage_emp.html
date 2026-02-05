@@ -1,9 +1,145 @@
-<!DOCTYPE html>
-<html>
-<body>
+{% extends "layouts/app_base.html" %}
 
-<h1>Manage the employees!</h1>
-<p>a few buttons, add emp, edit emp, delete emp, view all emps.</p>
+{% block title %}Manage Employees • POS{% endblock %}
+{% block page_header %}Manage Employees{% endblock %}
 
-</body>
-</html>
+{% block content %}
+
+<h1>Manage Employees</h1>
+<form method="post" class="mb-3">
+    {% csrf_token %}
+    <button name="action" value="go_back" class="btn btn-secondary">
+        Go back
+    </button>
+</form>
+<form method="post">
+    {% csrf_token %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Select</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Login (Email)</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp in employees %}
+                <tr>
+                    <td>
+                        <input
+                            type="radio"
+                            name="selected_emp_id"
+                            value="{{ emp.e_id }}"
+                            required
+                        >
+                    </td>
+                    <td>{{ emp.e_id }}</td>
+                    <td>{{ emp.name }}</td>
+                    <td>{{ emp.login }}</td>
+                    <td>
+                        <span class="badge
+                            {% if emp.role == 'MANAGER' %}bg-danger
+                            {% elif emp.role == 'COOK' %}bg-warning
+                            {% else %}bg-primary{% endif %}">
+                            {{ emp.role }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-3 d-flex gap-2">
+        <button type="button"
+                class="btn btn-outline-primary"
+                onclick="document.getElementById('addEmpDialog').showModal()">
+            Add Employee
+        </button>
+        <button name="action" value="delete" class="btn btn-outline-danger" 
+                onclick="return confirm('Are you sure you want to fire this person?');">
+            Delete Selected
+        </button>
+    </div>
+</form>
+
+<dialog id="addEmpDialog" style="padding: 20px; border-radius: 8px; border: 1px solid #ccc; width: 400px;">
+    <form method="post" id="addEmployeeForm">
+        {% csrf_token %}
+
+        <h3 class="mb-3">Add New Employee</h3>
+
+        <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <input type="text" name="name" required class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Login (Email):</label>
+            <input type="email" name="login" required class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password:</label>
+            <input
+                type="password"
+                name="password"
+                id="new_password"
+                required
+                class="form-control"
+                minlength="8"
+                placeholder="Min 8 chars, 1 number, 1 symbol"
+            >
+            <small class="text-muted">Min 8 chars, 1 number, 1 symbol</small>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Role:</label>
+            <select name="role" class="form-select">
+                {% for role in roles %}
+                    <option value="{{ role }}">{{ role }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end mt-4">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('addEmpDialog').close()">Cancel</button>
+            <button type="submit" name="action" value="add" class="btn btn-primary">Save Employee</button>
+        </div>
+    </form>
+</dialog>
+{% if error %}
+    <div class="alert alert-danger mt-3">{{ error }}</div>
+{% endif %}
+{% if success %}
+    <div class="alert alert-success mt-3">{{ success }}</div>
+{% endif %}
+<script>
+    document.getElementById("addEmployeeForm").addEventListener("submit", function(event) {
+        const passwordInput = document.getElementById("new_password");
+        const password = passwordInput.value;
+        let errorMessage = "";
+        if (password.length < 8) {
+            errorMessage = "Please lengthen this text to 8 characters or more.";
+        }
+        else if (!/\d/.test(password)) {
+            errorMessage = "Password must contain at least one number.";
+        }
+        else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            errorMessage = "Password must contain at least one special symbol (!@#$).";
+        }
+        if (errorMessage) {
+            event.preventDefault();
+            passwordInput.setCustomValidity(errorMessage);
+            passwordInput.reportValidity();
+        } else {
+            passwordInput.setCustomValidity("");
+        }
+    });
+    document.getElementById("new_password").addEventListener("input", function() {
+        this.setCustomValidity("");
+    });
+</script>
+{% endblock %}

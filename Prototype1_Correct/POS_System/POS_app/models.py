@@ -45,6 +45,13 @@ class Employees(models.Model):
     def name(self):
         return self._name
 
+    @property
+    def login(self):
+        return self._login
+
+    @property
+    def role(self):
+        return self._role
     def save(self, *args, **kwargs):  # override the default Django method
         if not self._password.startswith('pbkdf2_'):  # default hashing method
             self._password = make_password(self._password)

@@ -6,6 +6,7 @@ from .business.Panels.MenuManagmentPanel import MyMenuManagementPanel
 from .business.Panels.OrderCreationPanel import MyOrderCreationPanel
 from .business.Panels.OrderHistoryPanel import MyOrderHistoryPanel
 from .business.Panels.PaymentPanel import MyPaymentPanel
+from .business.Panels.EmployeeManagementPanel import MyEmployeeManagementPanel
 
 urlpatterns = [
     path('', views.login_view, name='login_site'), #the data will be sent here from the html template?
@@ -16,7 +17,7 @@ urlpatterns = [
     path('manager/manage_menu/', MyMenuManagementPanel.manager_manage_menu, name ='manager_manage_menu'),
     path('manager/generate_report/', views.manager_generate_report, name ='manager_generate_report'),
     path('manager/archived_orders/', views.manager_archived_orders, name ='manager_archived_orders'),
-    path('manager/manage_employees/', views.manager_manage_emp, name ='manager_manage_emp'),
+    path('manager/manage_employees/', MyEmployeeManagementPanel.manager_manage_emp, name='manager_manage_emp'),
     path('waiter/', views.waiter_dashboard, name='waiter_dashboard'),
     path('waiter/create_order/', MyOrderCreationPanel.waiter_create_order, name='waiter_create_order'),
     path('waiter/mark_delivered/', MyOrderCreationPanel.waiter_mark_delivered, name='waiter_mark_delivered'),
