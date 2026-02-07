@@ -97,4 +97,5 @@ class EmployeeManagementPanel:
 
         return render(request, "manager/Manager_manage_emp.html", context)
 
+
 MyEmployeeManagementPanel = EmployeeManagementPanel()

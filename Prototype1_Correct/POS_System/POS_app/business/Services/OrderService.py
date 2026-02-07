@@ -37,7 +37,8 @@ class OrderService:
                 order.save()
 
                 for position, item in enumerate(items, start=1):
-                    menu_item = MenuItems.objects.get(m_id=item["menu_item_id"])
+                    menu_item = MenuItems.objects.get(
+                        m_id=item["menu_item_id"])
                     order_item = OrderItems(
                         m_id=menu_item,
                         quantity=item["quantity"],
@@ -65,6 +66,12 @@ class OrderService:
             delivered_at__isnull=True,
         ).order_by("created_at")
 
+    def list_delivered(self):
+        return Orders.objects.filter(
+            status=Utils.OrderStatus.DELIVERED.name,
+            delivered_at__isnull=False,
+        ).order_by("created_at")
+
     def list_open(self):
         return Orders.objects.filter(
             status__in=[
@@ -81,6 +88,7 @@ class OrderService:
         except Orders.DoesNotExist:
             return {"error": "Order not found."}
 
+        order.status = Utils.OrderStatus.DELIVERED.name
         order.delivered_at = timezone.now()
         order.save()
         return {"success": "Order marked as delivered."}

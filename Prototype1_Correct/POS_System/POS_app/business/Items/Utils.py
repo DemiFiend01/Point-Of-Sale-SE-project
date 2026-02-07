@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from POS_app.business.Items.Order import Order
 
+
 class PreparationTimeEstimator:
     @staticmethod
     def estimate(order: "Order") -> int:  # public method
@@ -21,6 +22,7 @@ class OrderStatus(Enum):
     AWAITING_PREPARATION = "Awaiting preparation"
     IN_PREPARATION = "In preparation"
     READY = "Ready"
+    DELIVERED = "Delivered"
     PAID = "Paid"
     ARCHIVED = "Archived"
     CANCELED = "Canceled"

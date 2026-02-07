@@ -1,9 +1,123 @@
-<!DOCTYPE html>
-<html>
-<body>
+{% extends "layouts/app_base.html" %}
+{% load order_extras %}
 
-<h1>Process payment</h1>
-<p>list from the DB that we can select and then proceed to another site with the id of that order to pay for it</p>
+{% block title %}Waiter - POS{% endblock %}
+{% block page_header %}Payment{% endblock %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="mb-4">
+    <h4 class="fw-semibold">Payment for ready orders</h4>
+    <p class="text-muted mb-0">Choose an order to be paid for.</p>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Table</th>
+                        <th>Takeaway</th>
+                        <th>Items</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.displayed_id }}</td>
+                        <td>{{ order.table_no }}</td>
+                        <td>{{ order.is_takeaway|yesno:"Yes,No" }}</td>
+                        <td>
+                            {% for item in order_items|get_item:order.o_id %}
+                            {{ item.name }} x{{ item.quantity }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                            <span class="text-muted">No items</span>
+                            {% endfor %}
+                        </td>
+                        <td class="text-end">
+
+                            <button type="button" class="btn btn-outline-success btn-sm"
+                                onclick="document.getElementById('paymentDialog{{ order.o_id }}').showModal()">Pay</button>
+
+                            <dialog id="paymentDialog{{ order.o_id }}"
+                                style="padding: 20px; border-radius: 8px; border: 1px solid #ccc; width: 400px; ">
+                                <form method="post" action="{% url 'waiter_payment' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="order_id" value="{{ order.o_id }}">
+
+                                    <h3>Order #{{ order.displayed_id }} Payment</h3>
+
+                                    <div class="mb-3">
+                                        <label>Items:</label>
+                                        <div class="border rounded p-2" style="max-height:200px; overflow-y:auto;">
+                                            {% for item in order_items|get_item:order.o_id %}
+                                            <div>{{ item.name }} x{{ item.quantity }}</div>
+                                            {% empty %}
+                                            <span class="text-muted">No items</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Amount:</label>
+                                        <input type="text" class="form-control total-amount" readonly
+                                            value="{{ order.default_total }}">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Currency:</label>
+                                        <select name="currency" class="form-select currency-select" required>
+                                            {% for currency in currencies %}
+                                            <option value="{{ currency.0 }}">
+                                                {{ currency.1 }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Payment Method:</label>
+
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="payment_method"
+                                                value="card" checked>
+                                            <label class="form-check-label">Card</label>
+                                        </div>
+
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="payment_method"
+                                                value="cash">
+                                            <label class="form-check-label">Cash</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2 mt-3">
+                                        <button type="button" class="btn btn-secondary"
+                                            onclick="document.getElementById('paymentDialog{{ order.o_id }}').close()">Cancel</button>
+                                        <button type="submit" class="btn btn-success">Confirm Payment</button>
+                                    </div>
+                                </form>
+                            </dialog>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a class="btn btn-outline-secondary" href="{% url 'waiter_dashboard' %}">Back</a>
+    </div>
+</div>
+
+{% endblock %}

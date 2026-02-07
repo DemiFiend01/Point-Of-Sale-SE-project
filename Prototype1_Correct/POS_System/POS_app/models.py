@@ -8,27 +8,35 @@ import POS_app.business.Items.Utils as utils
 # Create your models here.
 
 characters = ['!', '@', '$', '&', '*', '_']
+
+
 def has_appropriate_characters(text: str):
-    return any(char in characters for char in text) #does text contain any of those chars?
+    # does text contain any of those chars?
+    return any(char in characters for char in text)
+
 
 def has_numbers(text: str):
     return any(char.isdigit() for char in text)
 
+
 def password_validator(value: str):
-    if len(value) < 8: #the password must be at least 8 letters long
+    if len(value) < 8:  # the password must be at least 8 letters long
         raise ValidationError("The password is too short.")
-    elif (has_appropriate_characters(value) ==  False):
-        raise ValidationError("Please input at least one of the following: '!', '@', '$', '&', '*', '_'.")
+    elif (has_appropriate_characters(value) == False):
+        raise ValidationError(
+            "Please input at least one of the following: '!', '@', '$', '&', '*', '_'.")
     elif (has_numbers(value) == False):
         raise ValidationError("Please insert at least one number.")
-    
+
+
 class Employees(models.Model):
     e_id = models.AutoField(primary_key=True, serialize=False,
                             verbose_name="Employee ID")  # no need for BigAutoField
     _name = models.CharField(max_length=255, verbose_name="Employee Name")
     _login = models.EmailField(
         max_length=255, unique=True, verbose_name="Login")  # unique logins
-    _password = models.CharField(max_length=255, validators=[password_validator],verbose_name="Password")
+    _password = models.CharField(max_length=255, validators=[
+                                 password_validator], verbose_name="Password")
     _role = models.CharField(
         max_length=50,
         choices=[(r.name, r.value) for r in user.Role], verbose_name="Employee Role"
@@ -52,11 +60,11 @@ class Employees(models.Model):
     @property
     def role(self):
         return self._role
+
     def save(self, *args, **kwargs):  # override the default Django method
         if not self._password.startswith('pbkdf2_'):  # default hashing method
             self._password = make_password(self._password)
         super().save(*args, **kwargs)  # call the default Django method
-
 
 
 class Orders(models.Model):
@@ -73,7 +81,7 @@ class Orders(models.Model):
     ready_at = models.DateTimeField(
         blank=True, null=True, verbose_name="Ready at")
     delivered_at = models.DateTimeField(
-        blank=True, null=True, verbose_name="Paid at")
+        blank=True, null=True, verbose_name="Delivered at")
     paid_at = models.DateTimeField(
         blank=True, null=True, verbose_name="Paid at")
     archived_at = models.DateTimeField(
@@ -95,7 +103,8 @@ class Orders(models.Model):
 class MenuItems(models.Model):
     m_id = models.AutoField(
         primary_key=True, serialize=False, verbose_name="Menu Item ID")
-    name = models.CharField(max_length=255, unique=True, verbose_name="Name") #can't have two burgers with just a different price lol
+    # can't have two burgers with just a different price lol
+    name = models.CharField(max_length=255, unique=True, verbose_name="Name")
     price = models.DecimalField(max_digits=5, decimal_places=2, validators=[MinValueValidator(
         0)], verbose_name="Price")  # cannot be negative, basically Float
     currency = models.CharField(max_length=20, choices=[(
