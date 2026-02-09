@@ -1,9 +1,39 @@
-<!DOCTYPE html>
-<html>
-<body>
+{% extends "layouts/app_base.html" %}
 
-<h1>Generate report</h1>
-<p>Choose date from and to and then generate report. also check off whether you want to delete data afterwards</p>
+{% block title %}Manager â€˘ POS{% endblock %}
+{% block page_header %}Generate report{% endblock %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="mb-4">
+  <h4 class="fw-semibold">Generate financial report</h4>
+  <p class="text-muted mb-0">
+    Choose a date range based on when orders were paid.
+  </p>
+</div>
+
+<form method="post" class="card shadow-sm p-4">
+  {% csrf_token %}
+
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <label for="date_from" class="form-label">Date from</label>
+      <input type="date" id="date_from" name="date_from" class="form-control">
+    </div>
+    <div class="col-12 col-md-4">
+      <label for="date_to" class="form-label">Date to</label>
+      <input type="date" id="date_to" name="date_to" class="form-control">
+    </div>
+    <div class="col-12 col-md-4 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary w-100">
+        Generate report
+      </button>
+    </div>
+  </div>
+</form>
+
+{% if error %}
+  <p class="text-danger mt-3">{{ error }}</p>
+{% endif %}
+
+{% endblock %}

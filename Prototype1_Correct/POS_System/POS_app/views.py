@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import FileResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
@@ -12,6 +12,8 @@ from .business.Actors.Waiter import Waiter
 from .business.Actors.User import Role
 from functools import wraps
 from .models import Orders
+from .business.Services.ReportingService import ReportingService
+from datetime import datetime
 
 
 # special method to wrap the view methods to restrict access for specific roles
@@ -146,6 +148,41 @@ def manager_dashboard(request):
 
 @role_required(allowed_roles=[Role.MANAGER.name])
 def manager_generate_report(request):  # to be implemented, add returning
+    if request.method == "POST":
+        date_from_str = request.POST.get("date_from") or ""
+        date_to_str = request.POST.get("date_to") or ""
+
+        try:
+            date_from = datetime.strptime(date_from_str, "%Y-%m-%d").date() if date_from_str else None
+            date_to = datetime.strptime(date_to_str, "%Y-%m-%d").date() if date_to_str else None
+        except ValueError:
+            return render(
+                request,
+                "manager/Manager_generate_report.html",
+                {"error": "Please provide valid dates in YYYY-MM-DD format."},
+            )
+
+        if date_from and date_to and date_from > date_to:
+            return render(
+                request,
+                "manager/Manager_generate_report.html",
+                {"error": "Start date cannot be after end date."},
+            )
+
+        service = ReportingService()
+        report_path = service.generate_financial_report(
+            date_from=date_from,
+            date_to=date_to,
+            requested_by=request.session.get("user_login", "manager"),
+        )
+
+        return FileResponse(
+            open(report_path, "rb"),
+            as_attachment=True,
+            filename=report_path.name,
+            content_type="text/plain",
+        )
+
     return render(request, "manager/Manager_generate_report.html")
 
 
