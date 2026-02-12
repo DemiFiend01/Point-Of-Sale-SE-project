@@ -1,6 +1,6 @@
 from django.db import transaction
 from django.utils import timezone
-from POS_app.models import Orders, OrderItems, ServingRules, MenuItems, Employees
+from POS_app.models import Orders, OrderItems, ServingRules, MenuItems, Employees, Payments
 from POS_app.business.Items import Utils
 
 
@@ -72,6 +72,24 @@ class OrderService:
             delivered_at__isnull=False,
         ).order_by("created_at")
 
+    def list_archived(self):
+        return Orders.objects.filter(
+            status=Utils.OrderStatus.ARCHIVED.name,
+            delivered_at__isnull=False,
+        ).order_by("created_at")
+
+    def list_paid(self):
+        return Orders.objects.filter(
+            status=Utils.OrderStatus.PAID.name,
+            delivered_at__isnull=False,
+        ).order_by("created_at")
+
+    def list_cancelled(self):
+        return Orders.objects.filter(
+            status=Utils.OrderStatus.CANCELED.name,
+            delivered_at__isnull=True,
+        ).order_by("created_at")
+
     def list_open(self):
         return Orders.objects.filter(
             status__in=[
@@ -93,6 +111,17 @@ class OrderService:
         order.save()
         return {"success": "Order marked as delivered."}
 
+    def mark_archived(self, order_id: int):
+        try:
+            order = Orders.objects.get(o_id=order_id)
+        except Orders.DoesNotExist:
+            return {"error": "Order not found."}
+
+        order.status = Utils.OrderStatus.ARCHIVED.name
+        order.archived_at = timezone.now()
+        order.save()
+        return {"success": "Order marked as archived."}
+
     def cancel(self, order_id: int):
         try:
             order = Orders.objects.get(o_id=order_id)
@@ -105,3 +134,20 @@ class OrderService:
         order.status = Utils.OrderStatus.CANCELED.name
         order.save()
         return {"success": "Order canceled."}
+
+    def delete(self, orders):  # passing one queryset, so not *
+        print("inside the delete function")
+        if len(orders) == 0:
+            return {"error": "Nothing to delete."}
+        elif len(orders) >= 1:
+            print("The length is not zero")
+            try:
+                with transaction.atomic():
+                    ServingRules.objects.filter(o_id__in=orders).delete()
+                    Payments.objects.filter(o_id__in=orders).delete()
+                    count, _ = orders.delete()
+                    print("I think it's working?")
+            except Exception as e:
+                print(str(e))
+                return {"error": str(e)}
+            return {"success": "Order deleted."}

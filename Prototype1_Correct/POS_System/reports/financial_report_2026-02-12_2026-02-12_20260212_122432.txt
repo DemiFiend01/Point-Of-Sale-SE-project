@@ -1,0 +1,10 @@
+Financial Report
+Generated at: 2026-02-12 12:24:32 UTC
+Requested by: agata_ma_brata@gmail.com
+Period (paid_at): 2026-02-12 to 2026-02-12
+
+Orders:
+No paid orders found for selected period.
+
+Total orders: 0
+Total revenue: 0.00 ZLOTY

@@ -28,12 +28,13 @@
       <button type="submit" class="btn btn-primary w-100">
         Generate report
       </button>
+      <a class="btn btn-outline-secondary" href="{% url 'manager_dashboard' %}">Back</a>
     </div>
   </div>
 </form>
 
 {% if error %}
-  <p class="text-danger mt-3">{{ error }}</p>
+<p class="text-danger mt-3">{{ error }}</p>
 {% endif %}
 
 {% endblock %}

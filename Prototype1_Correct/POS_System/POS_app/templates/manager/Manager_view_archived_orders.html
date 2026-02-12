@@ -1,0 +1,62 @@
+{% extends "layouts/app_base.html" %}
+{% load order_extras %}
+
+{% block title %}Manager - POS{% endblock %}
+{% block page_header %}Archived orders{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h4 class="fw-semibold">Archived, paid for and cancelled orders</h4>
+    <p class="text-muted mb-0">Orders that have been completed.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Paid at</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>Items</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.paid_at }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>{{ order.default_total }}</td>
+                        <td>
+                            {% for item in order_items|get_item:order.o_id %}
+                            {{ item.name }} x{{ item.quantity }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                            <span class="text-muted">No items</span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-muted">No archived, paid for or cancelled orders.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="text-muted mb-0">Total price is {{total_price}} ZLOTY.</p>
+        <a class="btn btn-outline-secondary" href="{% url 'manager_dashboard' %}">Back</a>
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" name="action" value="delete_archived" class="btn btn-outline-danger">
+                Delete all archived
+            </button>
+            <button type="submit" name="action" value="delete_cancelled" class="btn btn-outline-danger">
+                Delete all cancelled
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

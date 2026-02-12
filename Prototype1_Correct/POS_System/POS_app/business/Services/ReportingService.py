@@ -8,10 +8,12 @@ from django.conf import settings
 from django.utils import timezone
 
 from POS_app.models import Orders, ServingRules
+from POS_app.business.Services import OrderService
 
 
 class ReportingService:
     def __init__(self):
+        self._order_service = OrderService.OrderService()
         print("Business logic for reporting and analytics")
 
     def generate_financial_report(
@@ -20,7 +22,8 @@ class ReportingService:
         date_to: date | None,
         requested_by: str,
     ) -> Path:
-        orders_qs = Orders.objects.filter(paid_at__isnull=False).order_by("paid_at")
+        orders_qs = Orders.objects.filter(
+            paid_at__isnull=False).order_by("paid_at")
         if date_from:
             orders_qs = orders_qs.filter(paid_at__date__gte=date_from)
         if date_to:
@@ -42,7 +45,8 @@ class ReportingService:
         period_to = date_to.isoformat() if date_to else "all"
 
         report_lines.append("Financial Report")
-        report_lines.append(f"Generated at: {now.strftime('%Y-%m-%d %H:%M:%S %Z')}")
+        report_lines.append(
+            f"Generated at: {now.strftime('%Y-%m-%d %H:%M:%S %Z')}")
         report_lines.append(f"Requested by: {requested_by}")
         report_lines.append(f"Period (paid_at): {period_from} to {period_to}")
         report_lines.append("")
@@ -54,13 +58,22 @@ class ReportingService:
             report_lines.append("No paid orders found for selected period.")
         else:
             for order in orders:
-                order_total = self._calculate_order_total(rules_by_order.get(order.o_id, []))
+                order_total = self._calculate_order_total(
+                    rules_by_order.get(order.o_id, []))
                 total_revenue += order_total
-                paid_at = order.paid_at.strftime("%Y-%m-%d %H:%M:%S") if order.paid_at else "n/a"
+                paid_at = order.paid_at.strftime(
+                    "%Y-%m-%d %H:%M:%S") if order.paid_at else "n/a"
                 report_lines.append(
                     f"- Order {order.o_id} (display {order.displayed_id}) "
                     f"paid_at {paid_at} total {order_total:.2f} ZLOTY"
                 )
+                result = self._order_service.mark_archived(order.o_id)
+                if "error" in result:
+                    print(result["error"])
+                    errors = result["error"]
+                else:
+                    print(result["success"])
+                    success = result["success"]
 
         report_lines.append("")
         report_lines.append(f"Total orders: {len(orders)}")
@@ -81,6 +94,7 @@ class ReportingService:
             order_item = rule.oi_id
             menu_item = order_item.m_id
             tax = menu_item.tax / Decimal("100")
-            subtotal = order_item.quantity * menu_item.price * (Decimal("1.00") + tax)
+            subtotal = order_item.quantity * \
+                menu_item.price * (Decimal("1.00") + tax)
             total += subtotal
         return total

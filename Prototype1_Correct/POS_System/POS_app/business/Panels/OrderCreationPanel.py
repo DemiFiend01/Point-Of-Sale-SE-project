@@ -2,20 +2,21 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from POS_app.business.Actors.User import Role
 from POS_app.business.Services import OrderService
+from POS_app.business.Services import PaymentService
 from POS_app.models import MenuItems, ServingRules
 from POS_app.views import role_required
 
 
-
-#maybe make some functions static? if not all
+# maybe make some functions static? if not all
 class OrderCreationPanel:
     def __init__(self):
         self._order_service = OrderService.OrderService()
-        print("This class will have methods that will handle the GUI and call the appropriate methods of the service which will manage the DB")   
-        
-    #those methods here are not inside the class diagram
+        self._payment_service = PaymentService.PaymentService()
+        print("This class will have methods that will handle the GUI and call the appropriate methods of the service which will manage the DB")
+
+    # those methods here are not inside the class diagram
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_create_order(self,request):
+    def waiter_create_order(self, request):
         menu_items = MenuItems.objects.filter(active=True).order_by("name")
         errors = None
         success = None
@@ -37,7 +38,8 @@ class OrderCreationPanel:
                     items = []
                     break
                 if quantity > 0:
-                    items.append({"menu_item_id": item.m_id, "quantity": quantity})
+                    items.append(
+                        {"menu_item_id": item.m_id, "quantity": quantity})
 
             if not is_takeaway and not table_no:
                 errors = "Table number is required for dine-in orders."
@@ -69,7 +71,7 @@ class OrderCreationPanel:
         return render(request, "waiter/Waiter_create_order.html", context)
 
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_mark_delivered(self,request):
+    def waiter_mark_delivered(self, request):
         errors = None
         success = None
         if request.method == "POST":
@@ -86,11 +88,12 @@ class OrderCreationPanel:
         return render(
             request,
             "waiter/Waiter_mark_delivered.html",
-            {"orders": orders, "order_items": order_items, "error": errors, "success": success},
+            {"orders": orders, "order_items": order_items,
+                "error": errors, "success": success},
         )
 
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_view_ready_orders(self,request):
+    def waiter_view_ready_orders(self, request):
         orders = self._order_service.list_ready()
         order_items = self._build_order_items_map(orders)
         return render(
@@ -98,9 +101,58 @@ class OrderCreationPanel:
             "waiter/Waiter_view_ready.html",
             {"orders": orders, "order_items": order_items},
         )
-    
+
+    @role_required(allowed_roles=[Role.MANAGER.name])
+    def manager_view_archived_orders(self, request):
+        orders = []
+        print("view")
+        if request.method == "POST":
+            print("post")
+            # delete all
+            action = request.POST.get("action")
+            match action:
+                case "delete_archived":
+                    print("Deleting!")
+                    to_be_deleted = self._order_service.list_archived()
+                    print("has a list")
+                    if to_be_deleted:
+                        result = self._order_service.delete(to_be_deleted)
+                        if "error" in result:
+                            errors = result["error"]
+                        else:
+                            success = result["success"]
+                case "delete_cancelled":
+                    print("Deleting!")
+                    to_be_deleted = self._order_service.list_cancelled()
+                    print("has a list")
+                    if to_be_deleted:
+                        result = self._order_service.delete(to_be_deleted)
+                        if "error" in result:
+                            errors = result["error"]
+                        else:
+                            success = result["success"]
+
+        orders = self._order_service.list_archived(
+        ) | self._order_service.list_paid() | self._order_service.list_cancelled()
+        order_items = self._build_order_items_map(orders)
+        total_price_order = 0
+        total_price = 0
+
+        for o in orders:
+            total_price_order = self._payment_service._calculate_total(
+                order_id=o.o_id)["ZLOTY"]
+            total_price += total_price_order
+            o.default_total = total_price_order
+
+        return render(
+            request,
+            "manager/Manager_view_archived_orders.html",
+            {"orders": orders, "order_items": order_items,
+                "total_price": total_price},
+        )
+
     @role_required(allowed_roles=[Role.WAITER.name])
-    def waiter_cancel_order(self,request):
+    def waiter_cancel_order(self, request):
         errors = None
         success = None
         if request.method == "POST":
@@ -117,21 +169,22 @@ class OrderCreationPanel:
         return render(
             request,
             "waiter/Waiter_cancel_order.html",
-            {"orders": orders, "order_items": order_items, "error": errors, "success": success},
+            {"orders": orders, "order_items": order_items,
+                "error": errors, "success": success},
         )
-    
+
     # those methods will probably be callbacks from buttons/panels that need to be initiated
     def _start_order(self):  # protected method #waiter_create_order
-        #call add product, set takeaway etc 
+        # call add product, set takeaway etc
         print("Starting an order")
-        #a special page with multiple buttons and lists 
+        # a special page with multiple buttons and lists
 
     def _add_product(self):  # protected method
-        #when adding this is VERY IMPORTANT
-        #you add by a serving sequence.
-        #as in, you create a new serving sequence that is basically a group of at least one product
-        #think of it like spaghetti and burger being DINNER, ice cream being DESSERT and then need to have a specific order
-        #so this method 
+        # when adding this is VERY IMPORTANT
+        # you add by a serving sequence.
+        # as in, you create a new serving sequence that is basically a group of at least one product
+        # think of it like spaghetti and burger being DINNER, ice cream being DESSERT and then need to have a specific order
+        # so this method
         print("Adding a product to the order")
 
     def _set_takeaway(self):  # protected method
@@ -163,5 +216,6 @@ class OrderCreationPanel:
                 }
             )
         return order_items
+
 
 MyOrderCreationPanel = OrderCreationPanel()
