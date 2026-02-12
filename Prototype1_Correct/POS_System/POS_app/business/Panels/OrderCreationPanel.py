@@ -4,6 +4,7 @@ from POS_app.business.Actors.User import Role
 from POS_app.business.Services import OrderService
 from POS_app.business.Services import PaymentService
 from POS_app.models import MenuItems, ServingRules
+from POS_app.business.Items import Utils
 from POS_app.views import role_required
 
 
@@ -141,7 +142,8 @@ class OrderCreationPanel:
         for o in orders:
             total_price_order = self._payment_service._calculate_total(
                 order_id=o.o_id)["ZLOTY"]
-            total_price += total_price_order
+            if o.status != Utils.OrderStatus.ARCHIVED:
+                total_price += total_price_order
             o.default_total = total_price_order
 
         return render(
