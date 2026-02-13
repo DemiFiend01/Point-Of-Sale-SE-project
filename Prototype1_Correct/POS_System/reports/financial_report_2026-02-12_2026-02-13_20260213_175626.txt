@@ -1,0 +1,12 @@
+Financial Report
+Generated at: 2026-02-13 17:56:26 UTC
+Requested by: agata_ma_brata@gmail.com
+Period (paid_at): 2026-02-12 to 2026-02-13
+
+Orders:
+- Order 20 (display 2) paid_at 2026-02-12 12:54:50 total 300.24 ZLOTY
+- Order 24 (display 1) paid_at 2026-02-12 12:59:52 total 300.24 ZLOTY
+- Order 25 (display 1) paid_at 2026-02-13 17:55:49 total 34.56 ZLOTY
+
+Total orders: 3
+Total revenue: 635.04 ZLOTY

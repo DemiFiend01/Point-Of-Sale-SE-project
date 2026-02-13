@@ -142,7 +142,7 @@ class OrderCreationPanel:
         for o in orders:
             total_price_order = self._payment_service._calculate_total(
                 order_id=o.o_id)["ZLOTY"]
-            if o.status != Utils.OrderStatus.ARCHIVED:
+            if str(o.status).strip() != "CANCELED":
                 total_price += total_price_order
             o.default_total = total_price_order
 

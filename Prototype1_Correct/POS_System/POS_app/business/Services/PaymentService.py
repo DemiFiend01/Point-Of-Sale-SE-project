@@ -29,7 +29,8 @@ class PaymentService:
         payment.save()
 
         # when generating a report change all orders to archived to then delete them after some time i guess
-        order.status = Utils.OrderStatus.PAID
+        order.status = Utils.OrderStatus.PAID.value
+        print(order.status)
         order.paid_at = timezone.now()
         order.save()
         return {"success": "Order paid for."}
